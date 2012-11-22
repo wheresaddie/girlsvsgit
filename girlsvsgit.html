@@ -1,0 +1,51 @@
+<!doctype html> <html>
+<head>
+<meta charset=UTF-8>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
+<script TYPE="text/javascript">
+global_names = [
+	"Jessica", "Heather", "Jasmin", "Tiffany", "Rachel" 
+]
+
+function replace_avatar() {
+	var rand = Math.floor(Math.random() * global_names.length) + 1
+	var avatar_name = global_names[rand]
+	// $("span.name-only").text(global_names[rand])
+
+	var full_name = 'GIRLS vs GITHUB'
+	var user_name = avatar_name
+	var image_link_url = 'img/'+avatar_name+'.png'
+	var image_url = 'img/'+avatar_name+'.png'
+	var new_avatar = '<a href="'+image_link_url+"\" itemprop=\"image\"><img height=\"210\" src=\""+image_url+"\" width=\"210\" /></a>"
+	new_avatar += "<h1><span itemprop=\"name\">"+full_name+"</span>"
+    new_avatar += "<em itemprop=\"additionalName\">"+user_name+"</em></h1>"
+	$("div.avatared").html(new_avatar)	
+}
+
+$(document).ready(function() {
+	replace_avatar();
+$("body").css("background-color","pink");
+// change fonts and font colors here for all menus and body, once I figured it out :)
+	// alert("hello..testing 1 2 3")
+	});
+ 
+</script>
+
+
+
+</head>
+<body>
+
+testing body font/color here
+
+<div class="avatared">
+	This needs to be replaced!
+</div>
+	
+
+</body>
+
+
+
+</html>
