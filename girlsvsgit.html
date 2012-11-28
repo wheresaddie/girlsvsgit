@@ -3,11 +3,11 @@
 <head>
 <meta charset=UTF-8>
 
-<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Crafty+Girls">
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Rochester">
     <style>
       body {
-        font-family: 'Crafty+Girls';
-        font-size: 20px;
+        font-family: 'Rochester';
+        font-size: 24px;
       }
     </style>
 
@@ -19,12 +19,13 @@ var global_names = [
   "Jessica", "Heather", "Jasmin", "Tiffany", "Rachel"
 ]
 
+
 function replace_avatar() {
   var rand = Math.floor(Math.random() * global_names.length);
   var avatar_name = global_names[rand];
   // $("span.name-only").text(global_names[rand])
 
-  var full_name = 'Girls vs. Github';
+  var full_name = 'Girls vs. Git';
   var user_name = avatar_name;
   var image_link_url = 'img/'+ avatar_name +'.png';
   var image_url = 'img/'+ avatar_name +'.png';
@@ -47,19 +48,11 @@ $(document).ready(function() {
   $("description").css({'color': '#C031C7'});
    // in github e.g. <a rel="mirror" class="repo_filter" href="#">Mirrors</a>
   $("repo_filter").css({'color': '#C031C7'});
+  
 
+//"mega-icon mega-icon-public-repo"  replace this icon with icon girlsvsgit/icon.gif
+// "mega-icon mega-icon-repo-forked" replace this icon with icon girlsvsgit/icon.gif
 
-//mega-icon mega-icon-public-repo  32 x 32 x 32
-// mega-icon mega-icon-repo-forked for icons in list 
-
-
-
-/* @font-face{ 
-    font-family: CreamPuff; 
-    src: url('fonts/creampuff.eot'); // For IE  
-    src: local('creampuff'), url('fonts/creampuff.ttf') format('truetype'); // For non-IE 
-} 
-*/
 
 });
  
@@ -68,12 +61,11 @@ $(document).ready(function() {
 </head>
 <body>
 
-<p>test text for body font/color here</p>
-<description> 411 </description> 
-<h3>test test for header here</h3>
 
 <div class="avatared">
+
   This needs to be replaced!
+
 </div>
 
 
