@@ -2,6 +2,15 @@
 <html>
 <head>
 <meta charset=UTF-8>
+
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Crafty+Girls">
+    <style>
+      body {
+        font-family: 'Crafty+Girls';
+        font-size: 20px;
+      }
+    </style>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
 <script TYPE="text/javascript">
@@ -15,7 +24,7 @@ function replace_avatar() {
   var avatar_name = global_names[rand];
   // $("span.name-only").text(global_names[rand])
 
-  var full_name = 'GIRLS vs GITHUB';
+  var full_name = 'Girls vs. Github';
   var user_name = avatar_name;
   var image_link_url = 'img/'+ avatar_name +'.png';
   var image_url = 'img/'+ avatar_name +'.png';
@@ -31,9 +40,27 @@ function replace_avatar() {
 
 $(document).ready(function() {
   replace_avatar();
-  $("body").css({"background-color" : "rgba(255,192,203,1)"});
-  // change fonts and font colors here for all menus and body, once I figured it out :)
-  // alert("hello..testing 1 2 3");
+  $("body").css({"background-color" : "#FF82AB"});
+  $("p").css({'color': '#FFF0F5'});
+  $("h3").css({'color': '#FF00AA'});
+  // in github "p class = description" 
+  $("description").css({'color': '#C031C7'});
+   // in github e.g. <a rel="mirror" class="repo_filter" href="#">Mirrors</a>
+  $("repo_filter").css({'color': '#C031C7'});
+
+
+//mega-icon mega-icon-public-repo  32 x 32 x 32
+// mega-icon mega-icon-repo-forked for icons in list 
+
+
+
+/* @font-face{ 
+    font-family: CreamPuff; 
+    src: url('fonts/creampuff.eot'); // For IE  
+    src: local('creampuff'), url('fonts/creampuff.ttf') format('truetype'); // For non-IE 
+} 
+*/
+
 });
  
 </script>
@@ -41,7 +68,9 @@ $(document).ready(function() {
 </head>
 <body>
 
-testing body font/color here
+<p>test text for body font/color here</p>
+<description> 411 </description> 
+<h3>test test for header here</h3>
 
 <div class="avatared">
   This needs to be replaced!
