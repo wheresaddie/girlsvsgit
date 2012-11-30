@@ -9,6 +9,8 @@
         font-family: 'Rochester';
         font-size: 24px;
       }
+
+  
     </style>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -19,12 +21,9 @@ var global_names = [
   "Jessica", "Heather", "Jasmin", "Tiffany", "Rachel"
 ]
 
-
 function replace_avatar() {
   var rand = Math.floor(Math.random() * global_names.length);
   var avatar_name = global_names[rand];
-  // $("span.name-only").text(global_names[rand])
-
   var full_name = 'Girls vs. Git';
   var user_name = avatar_name;
   var image_link_url = 'img/'+ avatar_name +'.png';
@@ -48,11 +47,20 @@ $(document).ready(function() {
   $("description").css({'color': '#C031C7'});
    // in github e.g. <a rel="mirror" class="repo_filter" href="#">Mirrors</a>
   $("repo_filter").css({'color': '#C031C7'});
-  
 
-//"mega-icon mega-icon-public-repo"  replace this icon with icon girlsvsgit/icon.gif
+
+//span class = "mega-icon mega-icon-public-repo"  replace this icon with icon girlsvsgit/icon.gif
 // "mega-icon mega-icon-repo-forked" replace this icon with icon girlsvsgit/icon.gif
 
+// for PIRATE BAY 
+  $("p#subm input").first().val("Princess Search");
+  $("p#subm input").first().attr("title","Princess Search");
+  $("p#subm input").val("Make me a Princess!!");
+  $("p#inp input").attr("placeholder", "Princess Search");
+  $("p#inp input").attr("title", "Princess Search");
+  $("strong#howdl").attr ("title", "Where is my Prince?")
+  //need a better image with logo but my wifi is slow as fuck at the moment so this is just a placeholder (requires: 470x400 px)
+  $('#fp h1 a').css('background-image','url("http://farm9.staticflickr.com/8066/8232603950_45d043d369_o.jpg")');
 
 });
  
