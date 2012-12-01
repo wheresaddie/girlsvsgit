@@ -10,6 +10,21 @@
         font-size: 24px;
       }
 
+    /* #fp #inp input {
+    padding-bottom: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 3px;
+    width: 390px;
+    */
+
+    #glitter_text {
+      background-position:center;
+      text-align: center; 
+      padding-top: 20%;
+
+    }
+
   
     </style>
 
@@ -37,10 +52,10 @@ function replace_avatar() {
   ';
   $("div.avatared").html(new_avatar);
 }
-
+//for github (body/p/h3 speaks to all sites)
 $(document).ready(function() {
   replace_avatar();
-  $("body").css({"background-color" : "#FF82AB"});
+  $("body").css({"background-color" : "#F5A9F2"});
   $("p").css({'color': '#FFF0F5'});
   $("h3").css({'color': '#FF00AA'});
   // in github "p class = description" 
@@ -56,15 +71,38 @@ $(document).ready(function() {
   $("p#subm input").first().val("Princess Search");
   $("p#subm input").first().attr("title","Princess Search");
   $("p#subm input").val("Make me a Princess!!");
+
   $("p#inp input").attr("placeholder", "Princess Search");
   $("p#inp input").attr("title", "Princess Search");
-  $("strong#howdl").attr ("title", "Where is my Prince?")
+
+  $("div#howdl").attr ("title", "How do I become a Princess?")
   //need a better image with logo but my wifi is slow as fuck at the moment so this is just a placeholder (requires: 470x400 px)
   $('#fp h1 a').css('background-image','url("http://farm9.staticflickr.com/8066/8232603950_45d043d369_o.jpg")');
 
 });
  
 </script>
+
+<div id = "glitter_text">
+  <img src="http://text.glitter-graphics.net/sc/t.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/h.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/e.gif" border=0>
+  <img src="http://dl3.glitter-graphics.net/empty.gif" width=20 border=0>
+  <img src="http://text.glitter-graphics.net/sc/p.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/r.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/i.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/n.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/c.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/e.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/s.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/s.gif" border=0>
+  <img src="http://dl3.glitter-graphics.net/empty.gif" width=20 border=0>
+  <img src="http://text.glitter-graphics.net/sc/b.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/a.gif" border=0>
+  <img src="http://text.glitter-graphics.net/sc/y.gif" border=0>
+  <img src="http://dl3.glitter-graphics.net/empty.gif" width=20 border=0>
+
+</div>
 
 </head>
 <body>
