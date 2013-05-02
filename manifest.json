@@ -1,0 +1,31 @@
+{
+    "name": "Girls vs Git",
+    "version": "0.1",
+    "manifest_version": 2,
+    "description": "A Girlier GitHub",
+    "default_locale": "en",
+    "content_scripts": [
+        {
+            "matches": [
+                "https://github.com/*"
+            ],
+            "js": [
+                "jquery.js",
+                "content_script.js"
+            ]
+        }
+    ],
+    "content_security_policy": "script-src 'self'; object-src 'self' HTTPS",
+    "incognito": "split",
+    "offline_enabled": false,
+    "permissions": [
+        "http://github.com/*"
+    ],
+    "update_url": "http://path/to/updateInfo.xml",
+    "web_accessible_resources": [
+        "images/my-awesome-image1.png",
+        "images/my-amazing-icon1.png",
+        "style/double-rainbow.css",
+        "script/double-rainbow.js"
+    ]
+}
