@@ -3,7 +3,6 @@
     "version": "0.1",
     "manifest_version": 2,
     "description": "A Girlier GitHub",
-    "default_locale": "en",
     "content_scripts": [
         {
             "matches": [
@@ -15,7 +14,7 @@
             ]
         }
     ],
-    "content_security_policy": "script-src 'self'; object-src 'self' HTTPS",
+    "content_security_policy": "script-src 'self'; object-src 'self' https://",
     "incognito": "split",
     "offline_enabled": false,
     "permissions": [
