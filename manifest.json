@@ -14,17 +14,20 @@
             ]
         }
     ],
-    "content_security_policy": "script-src 'self'; object-src 'self' https://",
+    "content_security_policy": "script-src 'self' http://localhost; object-src 'self' http://localhost",
     "incognito": "split",
     "offline_enabled": false,
     "permissions": [
-        "http://github.com/*"
+        "https://github.com/*",
+        "http://localhost/*",
+        "https://graph.facebook.com/*",
+        "http://profile.ak.fbcdn.net/*"
     ],
     "update_url": "http://path/to/updateInfo.xml",
     "web_accessible_resources": [
-        "images/my-awesome-image1.png",
-        "images/my-amazing-icon1.png",
-        "style/double-rainbow.css",
-        "script/double-rainbow.js"
+        "manifest.json",
+        "common_first_names.txt",
+        "common_last_names.txt",
+        "usernames.txt"
     ]
 }
