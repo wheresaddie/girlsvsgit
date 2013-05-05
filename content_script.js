@@ -19,11 +19,14 @@ changeColors();
 function swapUsername(){
     var original = $(".name").text();
     original = original.replace(/ /g, "");
+    original = original.replace(/\n/g, "");
     console.log("the original is "+original+"\n the new is "+username);
     var html = $("body").html();
-    t = html.replace(">"+original+"<", ">"+username+"<", "g");
-    $("body").html(t);
-    console.log(t);
+    var reg = new RegExp(">"+original+"<", "g");
+    html = html.replace(reg, ">"+username+"<");
+    $("body").html(html);
+    
+    $(".name").text(username); //replaces name at top *dont forget to add in picture
 }
 
 function swapProfilePic(){
