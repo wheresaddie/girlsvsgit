@@ -1,6 +1,8 @@
 girlsvsgit
 ==========
 
+![alt text](example.jpg)
+
 GIRLS VS GITHUB
 
 Every username on github is replaced with a generic
@@ -38,3 +40,4 @@ wish list:
 * gravatars and usernames will be pulled from females twitter accounts via twitter api
 * embeded 'girly' fonts and style sheet colors changed 
 * extended to other tech sites such as slashdot usernames/stackoverflow etc..pirate bay etc.. 
+
