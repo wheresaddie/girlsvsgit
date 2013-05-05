@@ -6,51 +6,51 @@ var lightestPink = "#faeaf7";
 var lightPurple = "#f2dcf7";
 var firstNames = loadStrings("common_first_names.txt");
 var lastNames = loadStrings("common_last_names.txt");
-//var usernames = loadStrings("usernames.txt");
+var usernames = loadStrings("usernames.txt");
+var username = getRandom(usernames);
 
-newProfilePic();
-changeNames("squigly");
+swapProfilePic(); //replaces picture on profile page
+swapProfileName(); //replaces name on profile page
+swapUsername(); //replaces all instances of username
 changeCalendarColors();
 changeColors();
 
-
-function loadStrings(file) {
-    var result;
-    $.ajax({
-        type: "GET",
-        url: chrome.extension.getURL(file),
-        async: false,
-        success: function(data){
-            result = data;
-        }
-    });
-    return result.split("\n");
+//http://stackoverflow.com/questions/12729449/javascript-replace-doesnt-replace-all-occurences
+function swapUsername(){
+    var original = $(".name").text();
+    original = original.replace(/ /g, "");
+    console.log("the original is "+original+"\n the new is "+username);
+    var html = $("body").html();
+    t = html.replace(">"+original+"<", ">"+username+"<", "g");
+    $("body").html(t);
+    console.log(t);
 }
 
-function newProfilePic(){
-    var firstIndex = Math.floor(Math.random()*firstNames.length);
-    var lastIndex = Math.floor(Math.random()*lastNames.length);
-    var firstName = firstNames[firstIndex];
-    var lastName = firstNames[lastIndex];
+function swapProfilePic(){
+    //var firstIndex = Math.floor(Math.random()*firstNames.length);
+    //var lastIndex = Math.floor(Math.random()*lastNames.length);
+    //var firstName = firstNames[firstIndex];
+    //var lastName = lastNames[lastIndex];
         
-    $.getJSON("https://graph.facebook.com/"+firstName+"."+lastName+"?fields=id,name,gender,picture.height(236).width(236)", function(graphApi){  
+    $.getJSON("https://graph.facebook.com/"+getRandom(firstNames)+"."+getRandom(lastNames)+"?fields=id,name,gender,picture.height(236).width(236)", function(graphApi){  
         if(typeof(graphApi.error) == 'undefined' &&
            graphApi.gender == "female" &&
            graphApi.picture.data.is_silhouette == false){
                 imgURL = graphApi.picture.data.url;
                 swapProfilePics(imgURL);
         }
-        else getNewUserName();
+        else swapProfilePic();
     });
+}
+
+//uses different name than picture for security purposes and common decincy 
+function swapProfileName(){
+    $("[itemprop='name']").text(capitalize(getRandom(firstNames))+" "+capitalize(getRandom(lastNames)));
 }
 
 function swapProfilePics(image){
     $("div.avatared a img").attr("src", image);
     $("[class*='gravatar'] img").attr("src",image);
-}
-
-function changeNames(newUserName){
-    $(".name").text(newUserName);
 }
 
 function changeCalendarColors(){
@@ -81,4 +81,34 @@ function changeColors(){
     $(".contributions-tab h3").css("background", lightestPink); 
     $("#dashboard:parent").css("background", lightestPink).css("padding", "10"); //homepage dashboard
     $(".message").css("background", lightPurple); //octocat messages
+}
+
+/*-----------------USEFUL FUNCTIONS---------------------*/
+
+function capitalize(str){
+    var firstLet = str.charAt(0).toUpperCase();
+    var theRest = str.substring(1);
+    
+    return firstLet+theRest; 
+}
+
+//returns random value in array
+function getRandom(array){
+    var index = Math.floor(Math.random()*array.length);
+    var value = array[index];
+    return value;
+}
+
+//seperates .txt into arrays based on line returns
+function loadStrings(file) {
+    var result;
+    $.ajax({
+        type: "GET",
+        url: chrome.extension.getURL(file),
+        async: false,
+        success: function(data){
+            result = data;
+        }
+    });
+    return result.split("\n");
 }
