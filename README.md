@@ -1,7 +1,7 @@
 girlsvsgit
 ==========
 
-![alt text](http://brannondorsey.com/images/example.tiff)
+![example image](example.png)
 
 GIRLS VS GITHUB
 
