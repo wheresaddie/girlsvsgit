@@ -4,6 +4,9 @@ var anchorColor = "#d944d3";
 var iconColor = "#aa80cd";
 var lightestPink = "#faeaf7";
 var lightPurple = "#f2dcf7";
+var repoButtonLight = "#DD6DDD"; //for repo button gradient on index
+var repoButtonDark = "#B044A7" //dido
+var repoButtonBorder = "#A141A9";
 var firstNames = loadStrings("common_first_names.txt");
 var lastNames = loadStrings("common_last_names.txt");
 var usernames = loadStrings("usernames.txt");
@@ -26,14 +29,14 @@ function swapUsername(){
     html = html.replace(reg, ">"+username+"<");
     $("body").html(html);
     
-    $(".name").text(username); //replaces name at top *dont forget to add in picture
+    var content = $(".name").html(); //replaces name at top *dont forget to add in picture
+    var imgTagEnd = content.indexOf(">")+1;
+    var keep = content.substring(0, imgTagEnd);
+    $(".name").html(keep+username);
+    console.log(keep+username);
 }
 
 function swapProfilePic(){
-    //var firstIndex = Math.floor(Math.random()*firstNames.length);
-    //var lastIndex = Math.floor(Math.random()*lastNames.length);
-    //var firstName = firstNames[firstIndex];
-    //var lastName = lastNames[lastIndex];
         
     $.getJSON("https://graph.facebook.com/"+getRandom(firstNames)+"."+getRandom(lastNames)+"?fields=id,name,gender,picture.height(236).width(236)", function(graphApi){  
         if(typeof(graphApi.error) == 'undefined' &&
@@ -79,11 +82,22 @@ function changeCalendarColors(){
 function changeColors(){
     $("body").css("background", backgroundColor); //background
     $("a").css("color", anchorColor);             //links
+    $("a.selected").css("border-bottom", "2px solid "+anchorColor); 
+    $(".mega-icon").css("border-bottom", anchorColor);  //github cat icon 
     $("[class*='mini-icon']").css("color", iconColor);
     $("[class*='full-commit']").css("background", lightestPink); //profile bar above 
     $(".contributions-tab h3").css("background", lightestPink); 
     $("#dashboard:parent").css("background", lightestPink).css("padding", "10"); //homepage dashboard
-    $(".message").css("background", lightPurple); //octocat messages
+    $(".octofication .message").css({
+                        "background" : lightPurple,
+                        "border" : "1px solid #D2BBD2"
+                        }); //octocat messages
+    $(".minibutton.primary").css({
+                                    "background-image": "linear-gradient("+repoButtonLight+", "+repoButtonDark+")",
+                                    "color": "#fff",
+                                    "border-color" : repoButtonBorder
+                                    });
+    $(".minibutton.primary span").css("color", "#fff");
 }
 
 /*-----------------USEFUL FUNCTIONS---------------------*/
