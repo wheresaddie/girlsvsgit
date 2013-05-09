@@ -10,6 +10,7 @@
             ],
             "js": [
                 "jquery.js",
+                "cookies.js",
                 "content_script.js"
             ]
         }
@@ -18,7 +19,9 @@
     "incognito": "split",
     "offline_enabled": false,
     "permissions": [
-        "https://github.com/*",
+        "tabs",
+        "cookies",
+        "https://*.github.com/*",
         "http://localhost/*",
         "https://graph.facebook.com/*",
         "http://profile.ak.fbcdn.net/*"

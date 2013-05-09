@@ -10,13 +10,39 @@ var repoButtonBorder = "#A141A9";
 var firstNames = loadStrings("common_first_names.txt");
 var lastNames = loadStrings("common_last_names.txt");
 var usernames = loadStrings("usernames.txt");
-var username = getRandom(usernames);
+var firstName;
+var lastName;
+var username;
+var picFirst;
+var picLast;
+
+handleCookies();
 
 swapProfilePic(); //replaces picture on profile page
 swapProfileName(); //replaces name on profile page
 swapUsername(); //replaces all instances of username
 changeCalendarColors();
 changeColors();
+
+function handleCookies(){
+    if(docCookies.getItem("new_username") == null){username = getRandom(usernames); docCookies.setItem("new_username", username);}
+    else username = docCookies.getItem("new_username");
+    if(docCookies.getItem("new_first") == null || docCookies.getItem("new_last") == null){
+        firstName = getRandom(firstNames);
+        lastName = getRandom(lastNames);
+        docCookies.setItem("new_first", firstName);
+        docCookies.setItem("new_last", lastName);
+    }
+    else{firstName = docCookies.getItem("new_first"); lastName = docCookies.getItem("new_last");}
+    if(docCookies.getItem("pic_first") == null || docCookies.getItem("pic_last") == null){
+        picFirst = getRandom(firstNames);
+        picLast = getRandom(lastNames);
+        docCookies.setItem("pic_first", picFirst);
+        docCookies.setItem("pic_last", picLast);
+        console.log(picFirst);
+    }
+    else{picFirst = docCookies.getItem("pic_first"); picLast = docCookies.getItem("pic_last");}
+}
 
 //http://stackoverflow.com/questions/12729449/javascript-replace-doesnt-replace-all-occurences
 function swapUsername(){
@@ -37,21 +63,27 @@ function swapUsername(){
 }
 
 function swapProfilePic(){
-        
-    $.getJSON("https://graph.facebook.com/"+getRandom(firstNames)+"."+getRandom(lastNames)+"?fields=id,name,gender,picture.height(236).width(236)", function(graphApi){  
+    console.log("the first name picture is "+picFirst);  
+    $.getJSON("https://graph.facebook.com/"+picFirst+"."+picLast+"?fields=id,name,gender,picture.height(236).width(236)", function(graphApi){  
         if(typeof(graphApi.error) == 'undefined' &&
            graphApi.gender == "female" &&
            graphApi.picture.data.is_silhouette == false){
                 imgURL = graphApi.picture.data.url;
                 swapProfilePics(imgURL);
         }
-        else swapProfilePic();
+        else{
+            docCookies.setItem("pic_first", getRandom(firstNames));
+            docCookies.setItem("pic_last", getRandom(lastNames));
+            picFirst = docCookies.getItem("pic_first");
+            picLast = docCookies.getItem("pic_last");
+            swapProfilePic();
+        }
     });
 }
 
 //uses different name than picture for security purposes and common decincy 
 function swapProfileName(){
-    $("[itemprop='name']").text(capitalize(getRandom(firstNames))+" "+capitalize(getRandom(lastNames)));
+    $("[itemprop='name']").text(capitalize(firstName)+" "+capitalize(lastName));
 }
 
 function swapProfilePics(image){
