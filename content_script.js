@@ -10,6 +10,11 @@ var repoButtonBorder = "#A141A9";
 var firstNames = loadStrings("common_first_names.txt");
 var lastNames = loadStrings("common_last_names.txt");
 var usernames = loadStrings("usernames.txt");
+var origUsernames; //array that holds all original usernames
+var newUsernames;  //holds all new usernames
+var newNames;      //holds all new full names
+var picNames;      //holds all full names for pictures
+
 var firstName;
 var lastName;
 var username;
@@ -18,31 +23,40 @@ var picLast;
 
 handleCookies();
 
-swapProfilePic(); //replaces picture on profile page
-swapProfileName(); //replaces name on profile page
-swapUsername(); //replaces all instances of username
+swapProfilePic();   //replaces picture on profile page
+swapProfileNames(); //replaces full name and username on profile pages
+swapUsername();     //replaces all instances of username
 changeCalendarColors();
 changeColors();
 
 function handleCookies(){
-    if(docCookies.getItem("new_username") == null){username = getRandom(usernames); docCookies.setItem("new_username", username);}
-    else username = docCookies.getItem("new_username");
-    if(docCookies.getItem("new_first") == null || docCookies.getItem("new_last") == null){
-        firstName = getRandom(firstNames);
-        lastName = getRandom(lastNames);
-        docCookies.setItem("new_first", firstName);
-        docCookies.setItem("new_last", lastName);
+    if(docCookies.getItem("old_usernames") == null){
+        
     }
-    else{firstName = docCookies.getItem("new_first"); lastName = docCookies.getItem("new_last");}
-    if(docCookies.getItem("pic_first") == null || docCookies.getItem("pic_last") == null){
-        picFirst = getRandom(firstNames);
-        picLast = getRandom(lastNames);
-        docCookies.setItem("pic_first", picFirst);
-        docCookies.setItem("pic_last", picLast);
-        console.log(picFirst);
-    }
-    else{picFirst = docCookies.getItem("pic_first"); picLast = docCookies.getItem("pic_last");}
+    
+    
+    
 }
+
+//function handleCookies(){
+//    if(docCookies.getItem("new_username") == null){username = getRandom(usernames); docCookies.setItem("new_username", username);}
+//    else username = docCookies.getItem("new_username");
+//    if(docCookies.getItem("new_first") == null || docCookies.getItem("new_last") == null){
+//        firstName = getRandom(firstNames);
+//        lastName = getRandom(lastNames);
+//        docCookies.setItem("new_first", firstName);
+//        docCookies.setItem("new_last", lastName);
+//    }
+//    else{firstName = docCookies.getItem("new_first"); lastName = docCookies.getItem("new_last");}
+//    if(docCookies.getItem("pic_first") == null || docCookies.getItem("pic_last") == null){
+//        picFirst = getRandom(firstNames);
+//        picLast = getRandom(lastNames);
+//        docCookies.setItem("pic_first", picFirst);
+//        docCookies.setItem("pic_last", picLast);
+//        console.log(picFirst);
+//    }
+//    else{picFirst = docCookies.getItem("pic_first"); picLast = docCookies.getItem("pic_last");}
+//}
 
 //http://stackoverflow.com/questions/12729449/javascript-replace-doesnt-replace-all-occurences
 function swapUsername(){
@@ -55,7 +69,7 @@ function swapUsername(){
     html = html.replace(reg, ">"+username+"<");
     $("body").html(html);
     
-    var content = $(".name").html(); //replaces name at top *dont forget to add in picture
+    var content = $(".name").html();
     var imgTagEnd = content.indexOf(">")+1;
     var keep = content.substring(0, imgTagEnd);
     $(".name").html(keep+username);
@@ -82,8 +96,9 @@ function swapProfilePic(){
 }
 
 //uses different name than picture for security purposes and common decincy 
-function swapProfileName(){
+function swapProfileNames(){
     $("[itemprop='name']").text(capitalize(firstName)+" "+capitalize(lastName));
+    $("[itemprop='additionalName']").text(username);
 }
 
 function swapProfilePics(image){
@@ -132,7 +147,7 @@ function changeColors(){
     $(".minibutton.primary span").css("color", "#fff");
 }
 
-/*-----------------USEFUL FUNCTIONS---------------------*/
+/*-----------------HELPER FUNCTIONS---------------------*/
 
 function capitalize(str){
     var firstLet = str.charAt(0).toUpperCase();
