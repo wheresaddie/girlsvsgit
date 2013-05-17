@@ -42,11 +42,12 @@ function handleCookies(){
             i++;
         });
     //if there is no old_usernames cookie
-    if(oldUsernamesCookie == null){
+    if(oldUsernamesCookie == null || oldUsernamesCookie == "null"){
         oldUsernamesCookie = "";
         for(i = 0; i < visibleUsernames.length; i++){
            oldUsernamesCookie += visibleUsernames[i]+",";
-        }   
+        }
+        console.log("it is null");
     }
     else{
         //var queue = new Array();
