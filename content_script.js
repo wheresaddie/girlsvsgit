@@ -23,19 +23,39 @@ var picLast;
 
 handleCookies();
 
-swapProfilePic();   //replaces picture on profile page
-swapProfileNames(); //replaces full name and username on profile pages
-swapUsername();     //replaces all instances of username
-changeCalendarColors();
-changeColors();
+//swapProfilePic();   //replaces picture on profile page
+//swapProfileNames(); //replaces full name and username on profile pages
+//swapUsername();     //replaces all instances of username
+//changeCalendarColors();
+//changeColors();
 
 function handleCookies(){
-    if(docCookies.getItem("old_usernames") == null){
-        
+    var visibleUsernames = new Array();
+    var oldUsernamesCookie = docCookies.getItem("old_usernames");
+    var i = 0;
+    $(".title a").each(function(){
+            //$(this).text();
+            var link = $(this).attr("href");
+            var link = link.substring(1);
+            //if(link.indexOf("/") == -1) cookieString += link+",";
+            if(link.indexOf("/") == -1) visibleUsernames[i] = link; //if it is a username add it to the array
+            i++;
+        });
+    //if there is no old_usernames cookie
+    if(oldUsernamesCookie == null){
+        oldUsernamesCookie = "";
+        for(i = 0; i < visibleUsernames.length; i++){
+           oldUsernamesCookie += visibleUsernames[i]+",";
+        }   
     }
-    
-    
-    
+    else{
+        //var queue = new Array();
+        for(i = 0; i < visibleUsernames.length; i++){
+            if(oldUsernamesCookie.indexOf(visibleUsernames[i]) != -1) oldUsernamesCookie += visibleUsernames[i]+",";
+        }
+    }
+    docCookies.setItem("old_usernames", oldUsernamesCookie); 
+    //console.log(cookieString);
 }
 
 //function handleCookies(){
