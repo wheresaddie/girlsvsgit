@@ -30,21 +30,40 @@ handleCookies();
 //changeColors();
 
 function handleCookies(){
-    var visibleUsernames = new Array();
-    var oldUsernamesCookie = docCookies.getItem("old_usernames");
-    var i = 0;
+    var visibleUsernames = new Array(); //holds all possible usernames and links
+    var oldUsernamesCookie = docCookies.getItem("old_usernames"); //loads old old_usernames cookie
+    var i = 0; //keeps index of all username grabs
+    //grabs usernames on homepage
     $(".title a").each(function(){
-            //$(this).text();
             var link = $(this).attr("href");
-            var link = link.substring(1);
-            if(link.indexOf("/") == -1) visibleUsernames[i] = link; //if it is a username add it to the array
+            link = link.substring(1);
+            if(link.indexOf("/") == -1){
+                visibleUsernames[i] = link; //if it is a username add it to the array
+                i++;
+            }
+        });
+    //grabs usernames from explore page
+    $("ul h3 a").each(function(){
+        var link = $(this).attr("href");
+            link = link.substring(1);
+            if(link.indexOf("/") == -1){
+                visibleUsernames[i] = link; //if it is a username add it to the array
+                i++;
+            }
+    });
+    //grabs username from user profile
+    $("[itemprop='additionalName']").each(function(){
+            var text = $(this).text();
+            console.log("the additionalName is "+text);
+            visibleUsernames[i] = text;
             i++;
         });
-    if(oldUsernamesCookie == null || oldUsernamesCookie == "null") oldUsernamesCookie ="";
-    for(i = 0; i < visibleUsernames.length; i++){
-           if(oldUsernamesCookie.indexOf(visibleUsernames[i]) == -1) oldUsernamesCookie += visibleUsernames[i]+",";
+    if(oldUsernamesCookie == null || oldUsernamesCookie == "null") oldUsernamesCookie =""; //if there were no usernames found set var to ""
+    for(var j = 0; j < visibleUsernames.length; j++){
+            //adds username to cookie string if it was not already there
+           if(oldUsernamesCookie.indexOf(visibleUsernames[j]) == -1) oldUsernamesCookie += visibleUsernames[j]+",";
         }
-    docCookies.setItem("old_usernames", oldUsernamesCookie);
+    docCookies.setItem("old_usernames", oldUsernamesCookie); //resets (or sets) old_usernames cookie
     console.log(docCookies.getItem("old_usernames"));
     //console.log(cookieString);
 }
