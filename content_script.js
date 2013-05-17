@@ -37,25 +37,15 @@ function handleCookies(){
             //$(this).text();
             var link = $(this).attr("href");
             var link = link.substring(1);
-            //if(link.indexOf("/") == -1) cookieString += link+",";
             if(link.indexOf("/") == -1) visibleUsernames[i] = link; //if it is a username add it to the array
             i++;
         });
-    //if there is no old_usernames cookie
-    if(oldUsernamesCookie == null || oldUsernamesCookie == "null"){
-        oldUsernamesCookie = "";
-        for(i = 0; i < visibleUsernames.length; i++){
-           oldUsernamesCookie += visibleUsernames[i]+",";
+    if(oldUsernamesCookie == null || oldUsernamesCookie == "null") oldUsernamesCookie ="";
+    for(i = 0; i < visibleUsernames.length; i++){
+           if(oldUsernamesCookie.indexOf(visibleUsernames[i]) == -1) oldUsernamesCookie += visibleUsernames[i]+",";
         }
-        console.log("it is null");
-    }
-    else{
-        //var queue = new Array();
-        for(i = 0; i < visibleUsernames.length; i++){
-            if(oldUsernamesCookie.indexOf(visibleUsernames[i]) != -1) oldUsernamesCookie += visibleUsernames[i]+",";
-        }
-    }
-    docCookies.setItem("old_usernames", oldUsernamesCookie); 
+    docCookies.setItem("old_usernames", oldUsernamesCookie);
+    console.log(docCookies.getItem("old_usernames"));
     //console.log(cookieString);
 }
 
