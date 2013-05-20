@@ -10,10 +10,12 @@ var repoButtonBorder = "#A141A9";
 var firstNames = loadStrings("common_first_names.txt");
 var lastNames = loadStrings("common_last_names.txt");
 var usernames = loadStrings("usernames.txt");
-var origUsernames; //array that holds all original usernames
-var newUsernames;  //holds all new usernames
-var newNames;      //holds all new full names
-var picNames;      //holds all full names for pictures
+
+//arrays that hold values for all old and new names and their affiliates like picture lookups
+var oldUsernames;
+var newUsernames;
+var newFullNames;
+var picNames;
 
 var firstName;
 var lastName;
@@ -21,7 +23,7 @@ var username;
 var picFirst;
 var picLast;
 
-handleCookies();
+handleCookies(); //fills names arrays
 
 //swapProfilePic();   //replaces picture on profile page
 //swapProfileNames(); //replaces full name and username on profile pages
@@ -35,6 +37,7 @@ function handleCookies(){
     var newUsernamesCookie = docCookies.getItem("new_usernames");
     var newFullNamesCookie = docCookies.getItem("new_full_names");
     var picNamesCookie = docCookies.getItem("pic_names");
+    var totalCookieSize;
     
     var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a";
     var i = 0; //keeps index of all username grabs
@@ -72,12 +75,11 @@ function handleCookies(){
              newUsernamesCookie += newUsername+',';
              newFullNamesCookie += newFullName+',';
              picNamesCookie     += newPicName+',';
-             console.log(visibleUsernames[j]);
         }
     }
     
     //not very accurate because does not account for chrome's sanitation (i.e , == %2)
-    var totalCookieSize = oldUsernamesCookie.length+newUsernamesCookie.length+newFullNamesCookie.length+picNamesCookie.length;
+    totalCookieSize = oldUsernamesCookie.length+newUsernamesCookie.length+newFullNamesCookie.length+picNamesCookie.length;
     
     //reset cookies to null if they are to large to avoid err 400
     if(totalCookieSize >= 3500){
@@ -92,39 +94,30 @@ function handleCookies(){
     docCookies.setItem("new_full_names", newFullNamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
     docCookies.setItem("pic_names", picNamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
     
-    //var oldUsernames = oldUsernamesCookie.split(',');
-    //for(var k = 0; k<oldUsernames.length-1; k++){
-    //    console.log("one username is "+oldUsernames[k]);
-    //}
-    //console.log(docCookies.getItem("old_usernames"));
+     
+    oldUsernames = oldUsernamesCookie.split(',');
+    newUsernames = newUsernamesCookie.split(',');
+    newFullNames = newFullNamesCookie.split(',');
+    picNames = picNamesCookie.split(',');
 }
 
-//function handleCookies(){
-//    if(docCookies.getItem("new_username") == null){username = getRandom(usernames); docCookies.setItem("new_username", username);}
-//    else username = docCookies.getItem("new_username");
-//    if(docCookies.getItem("new_first") == null || docCookies.getItem("new_last") == null){
-//        firstName = getRandom(firstNames);
-//        lastName = getRandom(lastNames);
-//        docCookies.setItem("new_first", firstName);
-//        docCookies.setItem("new_last", lastName);
-//    }
-//    else{firstName = docCookies.getItem("new_first"); lastName = docCookies.getItem("new_last");}
-//    if(docCookies.getItem("pic_first") == null || docCookies.getItem("pic_last") == null){
-//        picFirst = getRandom(firstNames);
-//        picLast = getRandom(lastNames);
-//        docCookies.setItem("pic_first", picFirst);
-//        docCookies.setItem("pic_last", picLast);
-//        console.log(picFirst);
-//    }
-//    else{picFirst = docCookies.getItem("pic_first"); picLast = docCookies.getItem("pic_last");}
-//}
+    //console.log(oldUsernames);
+    //console.log("the length is "+oldUsernames.length);
+    //console.log('');
+    //console.log(newUsernames);
+    //console.log("the length is "+newUsernames.length);
+    //console.log('');
+    //console.log(newFullNames);
+    //console.log("the length is "+newFullNames.length);
+    //console.log('');
+    //console.log(picNames);
+    //console.log("the length is "+picNames.length);
 
 //http://stackoverflow.com/questions/12729449/javascript-replace-doesnt-replace-all-occurences
 function swapUsername(){
     var original = $(".name").text();
     original = original.replace(/ /g, "");
     original = original.replace(/\n/g, "");
-    console.log("the original is "+original+"\n the new is "+username);
     var html = $("body").html();
     var reg = new RegExp(">"+original+"<", "g");
     html = html.replace(reg, ">"+username+"<");
@@ -236,4 +229,13 @@ function loadStrings(file) {
         }
     });
     return result.split("\n");
+}
+
+//returns name value of username in desired array
+function cookieDBLookup(targetLookupArray, username){
+    if(oldUsernames.indexOf(username) != -1){
+        var index = oldUsernames.indexOf(username);
+        return cookieArray[index];
+    }
+    else return null;
 }
