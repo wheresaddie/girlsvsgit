@@ -32,18 +32,11 @@ handleCookies();
 function handleCookies(){
     var visibleUsernames = new Array(); //holds all possible usernames and links
     var oldUsernamesCookie = docCookies.getItem("old_usernames"); //loads old old_usernames cookie
+    var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a";
     var i = 0; //keeps index of all username grabs
-    //grabs usernames on homepage
-    $(".title a").each(function(){
-            var link = $(this).attr("href");
-            link = link.substring(1);
-            if(link.indexOf("/") == -1){
-                visibleUsernames[i] = link; //if it is a username add it to the array
-                i++;
-            }
-        });
-    //grabs usernames from explore page
-    $(".title a,ul li h3 a,ul li h4 a,.members li span a").each(function(){
+    
+    //grab usernames that are links (basically all of them)
+    $(linkSelector).each(function(){
         var link = $(this).attr("href");
             link = link.substring(1);
             if(link.indexOf("/") == -1){
@@ -51,12 +44,14 @@ function handleCookies(){
                 i++;
             }
     });
+    
     //grabs username from user profile
     $("[itemprop='additionalName']").each(function(){
             var text = $(this).text();
             visibleUsernames[i] = text;
             i++;
         });
+    
     if(oldUsernamesCookie == null || oldUsernamesCookie == "null") oldUsernamesCookie =""; //if there were no usernames found set var to ""
     for(var j = 0; j < visibleUsernames.length; j++){
             //adds username to cookie string if it was not already there
@@ -65,6 +60,7 @@ function handleCookies(){
                 //console.log(visibleUsernames[j]);
            }
         }
+        
     docCookies.setItem("old_usernames", oldUsernamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
     console.log(docCookies.getItem("old_usernames"));
 }
