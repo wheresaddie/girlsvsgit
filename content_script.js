@@ -32,6 +32,10 @@ handleCookies();
 function handleCookies(){
     var visibleUsernames = new Array(); //holds all possible usernames and links
     var oldUsernamesCookie = docCookies.getItem("old_usernames"); //loads old old_usernames cookie
+    var newUsernamesCookie = docCookies.getItem("new_usernames");
+    var newFullNamesCookie = docCookies.getItem("new_full_names");
+    var picNamesCookie = docCookies.getItem("pic_names");
+    
     var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a";
     var i = 0; //keeps index of all username grabs
     
@@ -53,16 +57,46 @@ function handleCookies(){
         });
     
     if(oldUsernamesCookie == null || oldUsernamesCookie == "null") oldUsernamesCookie =""; //if there were no usernames found set var to ""
+    if(newUsernamesCookie == null || newUsernamesCookie == "null") newUsernamesCookie =""; //if there were no usernames found set var to ""
+    if(newFullNamesCookie == null || newFullNamesCookie == "null") newFullNamesCookie =""; //if there were no usernames found set var to ""
+    if(picNamesCookie == null || picNamesCookie == "null") picNamesCookie =""; //if there were no usernames found set var to ""
+    
     for(var j = 0; j < visibleUsernames.length; j++){
-            //adds username to cookie string if it was not already there
-           if(oldUsernamesCookie.indexOf(visibleUsernames[j]) == -1){
-                oldUsernamesCookie += visibleUsernames[j]+",";
-                //console.log(visibleUsernames[j]);
-           }
-        }
+        var newFullName = getRandom(firstNames)+' '+getRandom(lastNames);
+        var newPicName = getRandom(firstNames)+'.'+getRandom(lastNames);
+        var newUsername = getRandom(usernames);
         
+        //adds username to cookie string if it was not already there
+        if(oldUsernamesCookie.indexOf(visibleUsernames[j]) == -1){
+             oldUsernamesCookie += visibleUsernames[j]+',';
+             newUsernamesCookie += newUsername+',';
+             newFullNamesCookie += newFullName+',';
+             picNamesCookie     += newPicName+',';
+             console.log(visibleUsernames[j]);
+        }
+    }
+    
+    //not very accurate because does not account for chrome's sanitation (i.e , == %2)
+    var totalCookieSize = oldUsernamesCookie.length+newUsernamesCookie.length+newFullNamesCookie.length+picNamesCookie.length;
+    
+    //reset cookies to null if they are to large to avoid err 400
+    if(totalCookieSize >= 3500){
+        oldUsernamesCookie ="";
+        newUsernamesCookie =""; 
+        newFullNamesCookie =""; 
+        picNamesCookie ="";
+    }
+    
     docCookies.setItem("old_usernames", oldUsernamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
-    console.log(docCookies.getItem("old_usernames"));
+    docCookies.setItem("new_usernames", newUsernamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
+    docCookies.setItem("new_full_names", newFullNamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
+    docCookies.setItem("pic_names", picNamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
+    
+    //var oldUsernames = oldUsernamesCookie.split(',');
+    //for(var k = 0; k<oldUsernames.length-1; k++){
+    //    console.log("one username is "+oldUsernames[k]);
+    //}
+    //console.log(docCookies.getItem("old_usernames"));
 }
 
 //function handleCookies(){
