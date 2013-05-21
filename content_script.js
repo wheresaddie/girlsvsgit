@@ -27,9 +27,9 @@ handleCookies(); //fills names arrays
 
 swapProfilePic();   //replaces picture on profile page
 //swapProfileNames(); //replaces full name and username on profile pages
-//swapUsername();     //replaces all instances of username
-//changeCalendarColors();
-//changeColors();
+swapUsernames();     //replaces all instances of usernames
+changeColors();
+changeCalendarColors();
 
 function handleCookies(){
     var visibleUsernames = new Array(); //holds all possible usernames and links
@@ -113,21 +113,21 @@ function handleCookies(){
     //console.log("the length is "+picNames.length);
 
 //http://stackoverflow.com/questions/12729449/javascript-replace-doesnt-replace-all-occurences
-function swapUsername(){
-    var original = $(".name").text();
-    original = original.replace(/ /g, "");
-    original = original.replace(/\n/g, "");
-    var html = $("body").html();
-    var reg = new RegExp(">"+original+"<", "g");
-    html = html.replace(reg, ">"+username+"<");
-    $("body").html(html);
-    
-    var content = $(".name").html();
-    var imgTagEnd = content.indexOf(">")+1;
-    var keep = content.substring(0, imgTagEnd);
-    $(".name").html(keep+username);
-    console.log(keep+username);
-}
+//function swapUsername(){
+//    var original = $(".name").text();
+//    original = original.replace(/ /g, "");
+//    original = original.replace(/\n/g, "");
+//    var html = $("body").html();
+//    var reg = new RegExp(">"+original+"<", "g");
+//    html = html.replace(reg, ">"+username+"<");
+//    $("body").html(html);
+//    
+//    var content = $(".name").html();
+//    var imgTagEnd = content.indexOf(">")+1;
+//    var keep = content.substring(0, imgTagEnd);
+//    $(".name").html(keep+username);
+//    console.log(keep+username);
+//}
 
 function swapProfilePic(){
     picNames = docCookies.getItem("pic_names").split(',');
@@ -151,6 +151,27 @@ function swapProfilePic(){
             }
         });
     }
+}
+
+function swapUsernames(){
+    var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a";
+    $(linkSelector).each(function(){
+        var link = $(this).attr("href");
+        link = link.substring(1);
+        for(var i = 0; i < oldUsernames.length; i++){
+            if(link.indexOf(oldUsernames[i]) != -1 ){
+            link = link.replace(oldUsernames[i], cookieDBLookup(newUsernames, oldUsernames[i]));
+            $(this).text(link);
+            break;  
+            }
+        }
+            //link = link.substring(1);
+            //if(link.indexOf("/") == -1){
+            //    var newUsername = cookieDBLookup(newUsernames, link)
+            //    $(this).text(newUsername);
+            //}
+            
+    });
 }
 
 //uses different name than picture for security purposes and common decincy 
