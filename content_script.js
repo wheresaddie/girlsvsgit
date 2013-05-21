@@ -10,6 +10,7 @@ var repoButtonBorder = "#A141A9";
 var firstNames = loadStrings("common_first_names.txt");
 var lastNames = loadStrings("common_last_names.txt");
 var usernames = loadStrings("usernames.txt");
+var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a";
 
 //arrays that hold values for all old and new names and their affiliates like picture lookups
 var oldUsernames;
@@ -27,6 +28,7 @@ handleCookies(); //fills names arrays
 
 swapProfilePic();   //replaces picture on profile page
 //swapProfileNames(); //replaces full name and username on profile pages
+swapUsername();
 swapUsernames();     //replaces all instances of usernames
 changeColors();
 changeCalendarColors();
@@ -38,9 +40,9 @@ function handleCookies(){
     var newFullNamesCookie = docCookies.getItem("new_full_names");
     var picNamesCookie = docCookies.getItem("pic_names");
     var totalCookieSize;
+    var i = 1; //keeps index of all username grabs
     
-    var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a";
-    var i = 0; //keeps index of all username grabs
+    visibleUsernames[0] = getLoggedInUsername(); //makes sure that first array value is logged in user
     
     //grab usernames that are links (basically all of them)
     $(linkSelector).each(function(){
@@ -113,21 +115,14 @@ function handleCookies(){
     //console.log("the length is "+picNames.length);
 
 //http://stackoverflow.com/questions/12729449/javascript-replace-doesnt-replace-all-occurences
-//function swapUsername(){
-//    var original = $(".name").text();
-//    original = original.replace(/ /g, "");
-//    original = original.replace(/\n/g, "");
-//    var html = $("body").html();
-//    var reg = new RegExp(">"+original+"<", "g");
-//    html = html.replace(reg, ">"+username+"<");
-//    $("body").html(html);
-//    
-//    var content = $(".name").html();
-//    var imgTagEnd = content.indexOf(">")+1;
-//    var keep = content.substring(0, imgTagEnd);
-//    $(".name").html(keep+username);
-//    console.log(keep+username);
-//}
+function swapUsername(){
+    var oldUsername = getLoggedInUsername();
+    var content = $("a.name").html();
+    console.log("The content is "+content);
+    var newUsername = cookieDBLookup(newUsernames, oldUsername)
+    $("a.name").html(content.replace(oldUsername, newUsername)); //swaps main logged in username button at top right
+    $("span.js-select-button").text(newUsername); //swaps logged in username select button on homepage
+}
 
 function swapProfilePic(){
     picNames = docCookies.getItem("pic_names").split(',');
@@ -154,23 +149,17 @@ function swapProfilePic(){
 }
 
 function swapUsernames(){
-    var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a";
-    $(linkSelector).each(function(){
+    var selector = linkSelector+".author-name a, a[rel='author']";
+    $(selector).each(function(){
         var link = $(this).attr("href");
-        link = link.substring(1);
         for(var i = 0; i < oldUsernames.length; i++){
             if(link.indexOf(oldUsernames[i]) != -1 ){
             link = link.replace(oldUsernames[i], cookieDBLookup(newUsernames, oldUsernames[i]));
+            link = link.substring(1);
             $(this).text(link);
-            break;  
+            break;
             }
         }
-            //link = link.substring(1);
-            //if(link.indexOf("/") == -1){
-            //    var newUsername = cookieDBLookup(newUsernames, link)
-            //    $(this).text(newUsername);
-            //}
-            
     });
 }
 
@@ -264,4 +253,14 @@ function cookieDBLookup(targetLookupArray, username){
         return targetLookupArray[index];
     }
     else return null;
+}
+
+//returns logged in users original username
+function getLoggedInUsername(){
+    var content = $("a.name").html();
+    var imgTagEnd = content.indexOf(">")+1;
+    var loggedInUsername = content.substring(imgTagEnd);
+    loggedInUsername = loggedInUsername.replace(/ /g, "");
+    loggedInUsername = loggedInUsername.replace(/\n/g, "");
+    return loggedInUsername;
 }
