@@ -25,7 +25,7 @@ var picLast;
 
 handleCookies(); //fills names arrays
 
-//swapProfilePic();   //replaces picture on profile page
+swapProfilePic();   //replaces picture on profile page
 //swapProfileNames(); //replaces full name and username on profile pages
 //swapUsername();     //replaces all instances of username
 //changeCalendarColors();
@@ -98,7 +98,6 @@ function handleCookies(){
     oldUsernames = oldUsernamesCookie.split(',');
     newUsernames = newUsernamesCookie.split(',');
     newFullNames = newFullNamesCookie.split(',');
-    picNames = picNamesCookie.split(',');
 }
 
     //console.log(oldUsernames);
@@ -131,22 +130,27 @@ function swapUsername(){
 }
 
 function swapProfilePic(){
-    console.log("the first name picture is "+picFirst);  
-    $.getJSON("https://graph.facebook.com/"+picFirst+"."+picLast+"?fields=id,name,gender,picture.height(236).width(236)", function(graphApi){  
-        if(typeof(graphApi.error) == 'undefined' &&
-           graphApi.gender == "female" &&
-           graphApi.picture.data.is_silhouette == false){
-                imgURL = graphApi.picture.data.url;
-                swapProfilePics(imgURL);
-        }
-        else{
-            docCookies.setItem("pic_first", getRandom(firstNames));
-            docCookies.setItem("pic_last", getRandom(lastNames));
-            picFirst = docCookies.getItem("pic_first");
-            picLast = docCookies.getItem("pic_last");
-            swapProfilePic();
-        }
-    });
+    picNames = docCookies.getItem("pic_names").split(',');
+    var username = $("[itemprop='additionalName']").text().replace(' ','');
+    var picName = cookieDBLookup(picNames, username);
+    console.log("the picname is "+picName);
+    if(typeof(picName) !== "undefined"){
+        console.log(picName);
+        $.getJSON("https://graph.facebook.com/"+picName+"?fields=id,name,gender,picture.height(236).width(236)", function(graphApi){  
+            if(typeof(graphApi.error) == 'undefined' &&
+               graphApi.gender == "female" &&
+               graphApi.picture.data.is_silhouette == false){
+                    imgURL = graphApi.picture.data.url;
+                    console.log("should have changed");
+                    swapProfilePics(imgURL);
+            }
+            else{
+                var test = docCookies.getItem("pic_names").replace(picName, getRandom(firstNames)+'.'+getRandom(lastNames));
+                docCookies.setItem("pic_names", test, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
+                swapProfilePic();
+            }
+        });
+    }
 }
 
 //uses different name than picture for security purposes and common decincy 
@@ -235,7 +239,8 @@ function loadStrings(file) {
 function cookieDBLookup(targetLookupArray, username){
     if(oldUsernames.indexOf(username) != -1){
         var index = oldUsernames.indexOf(username);
-        return cookieArray[index];
+        console.log(index);
+        return targetLookupArray[index];
     }
     else return null;
 }
