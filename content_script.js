@@ -10,7 +10,7 @@ var repoButtonBorder = "#A141A9";
 var firstNames = loadStrings("common_first_names.txt");
 var lastNames = loadStrings("common_last_names.txt");
 var usernames = loadStrings("usernames.txt");
-var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a";
+var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a:not(.js-toggler-target)";
 
 //arrays that hold values for all old and new names and their affiliates like picture lookups
 var oldUsernames;
@@ -24,16 +24,25 @@ var username;
 var picFirst;
 var picLast;
 
-handleCookies(); //fills names arrays
+//------------------CALL FUNCTIONS HERE-------------------//
+
+$("document").ready(function(){
+
+updateCookieDB(); //fills names arrays
 
 swapProfilePic();   //replaces picture on profile page
-//swapProfileNames(); //replaces full name and username on profile pages
-swapUsername();
-swapUsernames();     //replaces all instances of usernames
+swapProfileNames(); //replaces full name and username on profile pages
+swapLoggedInUsername();
+swapUsernames(); //replaces all instances of usernames
+swapFullNames(); //replaces all instances of fullnames
 changeColors();
 changeCalendarColors();
 
-function handleCookies(){
+});
+
+//--------------------------------------------------------//
+
+function updateCookieDB(){
     var visibleUsernames = new Array(); //holds all possible usernames and links
     var oldUsernamesCookie = docCookies.getItem("old_usernames"); //loads old old_usernames cookie
     var newUsernamesCookie = docCookies.getItem("new_usernames");
@@ -43,7 +52,7 @@ function handleCookies(){
     var i = 1; //keeps index of all username grabs
     
     visibleUsernames[0] = getLoggedInUsername(); //makes sure that first array value is logged in user
-    
+    console.log("the link selector is "+linkSelector);
     //grab usernames that are links (basically all of them)
     $(linkSelector).each(function(){
         var link = $(this).attr("href");
@@ -115,7 +124,7 @@ function handleCookies(){
     //console.log("the length is "+picNames.length);
 
 //http://stackoverflow.com/questions/12729449/javascript-replace-doesnt-replace-all-occurences
-function swapUsername(){
+function swapLoggedInUsername(){
     var oldUsername = getLoggedInUsername();
     var content = $("a.name").html();
     console.log("The content is "+content);
@@ -124,15 +133,42 @@ function swapUsername(){
     $("span.js-select-button").text(newUsername); //swaps logged in username select button on homepage
 }
 
+function swapUsernames(){
+    var selector = linkSelector+",.author-name a, a[rel='author']";
+    $(selector).each(function(){
+        var link = $(this).attr("href");
+        for(var i = 0; i < oldUsernames.length; i++){
+            if(link.indexOf(oldUsernames[i]) != -1 ){
+            link = link.replace(oldUsernames[i], cookieDBLookup(newUsernames, oldUsernames[i]));
+            link = link.substring(1);
+            $(this).text(link);
+            break;
+            }
+        }
+    });
+}
+
+function swapFullNames(){
+    var selector = ".members li em";
+    $(selector).each(function(){
+        var newUsername = $(this).prev().text();
+        var newFullName = cookieDBLookupFromArray(newUsernames, newFullNames, newUsername);
+        if(newFullName != null){
+            newFullName = newFullName.split(' ');
+            $(this).text('('+capitalize(newFullName[0])+' '+capitalize(newFullName[1])+')');
+        }
+    });
+}
+
 function swapProfilePic(){
-    picNames = docCookies.getItem("pic_names").split(',');
+    picNames = docCookies.getItem("pic_names");
+    if(picNames != null) picNames = picNames.split(',');
     var username = $("[itemprop='additionalName']").text().replace(' ','');
     var picName = cookieDBLookup(picNames, username);
-    console.log("the picname is "+picName);
     if(typeof(picName) !== "undefined"){
         console.log(picName);
         $.getJSON("https://graph.facebook.com/"+picName+"?fields=id,name,gender,picture.height(236).width(236)", function(graphApi){  
-            if(typeof(graphApi.error) == 'undefined' &&
+            if(typeof(graphApi.error) == "undefined" &&
                graphApi.gender == "female" &&
                graphApi.picture.data.is_silhouette == false){
                     imgURL = graphApi.picture.data.url;
@@ -148,25 +184,20 @@ function swapProfilePic(){
     }
 }
 
-function swapUsernames(){
-    var selector = linkSelector+".author-name a, a[rel='author']";
-    $(selector).each(function(){
-        var link = $(this).attr("href");
-        for(var i = 0; i < oldUsernames.length; i++){
-            if(link.indexOf(oldUsernames[i]) != -1 ){
-            link = link.replace(oldUsernames[i], cookieDBLookup(newUsernames, oldUsernames[i]));
-            link = link.substring(1);
-            $(this).text(link);
-            break;
-            }
-        }
-    });
-}
-
 //uses different name than picture for security purposes and common decincy 
 function swapProfileNames(){
-    $("[itemprop='name']").text(capitalize(firstName)+" "+capitalize(lastName));
-    $("[itemprop='additionalName']").text(username);
+    var fullNameSelector = "[itemprop='name']";
+    var usernameSelector = "[itemprop='additionalName']";
+    var oldUsername = $(usernameSelector).text();
+    if(oldUsername != ""){
+        var newFullName = cookieDBLookup(newFullNames, oldUsername);
+        var newUsername = cookieDBLookup(newUsernames, oldUsername);
+        console.log("the new full name is "+newFullName);
+        console.log("the new username is "+newUsername);
+        var firstAndLast = newFullName.split(' ');
+        $(fullNameSelector).text(capitalize(firstAndLast[0])+" "+capitalize(firstAndLast[1]));
+        $(usernameSelector).text(newUsername);
+    }
 }
 
 function swapProfilePics(image){
@@ -250,6 +281,15 @@ function cookieDBLookup(targetLookupArray, username){
     if(oldUsernames.indexOf(username) != -1){
         var index = oldUsernames.indexOf(username);
         console.log(index);
+        return targetLookupArray[index];
+    }
+    else return null;
+}
+
+//returns name value of username in desired array from desired array
+function cookieDBLookupFromArray(fromArray, targetLookupArray, key){
+    if(fromArray.indexOf(key) != -1){
+        var index = fromArray.indexOf(key);
         return targetLookupArray[index];
     }
     else return null;
