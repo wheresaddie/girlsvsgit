@@ -10,7 +10,7 @@ var repoButtonBorder = "#A141A9";
 var firstNames = loadStrings("common_first_names.txt");
 var lastNames = loadStrings("common_last_names.txt");
 var usernames = loadStrings("usernames.txt");
-var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a:not(.js-toggler-target)";
+var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a),.members li span a:not(.js-toggler-target),h1.avatared a";
 
 //arrays that hold values for all old and new names and their affiliates like picture lookups
 var oldUsernames;
@@ -52,7 +52,6 @@ function updateCookieDB(){
     var i = 1; //keeps index of all username grabs
     
     visibleUsernames[0] = getLoggedInUsername(); //makes sure that first array value is logged in user
-    console.log("the link selector is "+linkSelector);
     //grab usernames that are links (basically all of them)
     $(linkSelector).each(function(){
         var link = $(this).attr("href");
@@ -81,7 +80,7 @@ function updateCookieDB(){
         var newUsername = getRandom(usernames);
         
         //adds username to cookie string if it was not already there
-        if(oldUsernamesCookie.indexOf(visibleUsernames[j]) == -1){
+        if(!contains(oldUsernamesCookie, visibleUsernames[j])){
              oldUsernamesCookie += visibleUsernames[j]+',';
              newUsernamesCookie += newUsername+',';
              newFullNamesCookie += newFullName+',';
@@ -127,7 +126,6 @@ function updateCookieDB(){
 function swapLoggedInUsername(){
     var oldUsername = getLoggedInUsername();
     var content = $("a.name").html();
-    console.log("The content is "+content);
     var newUsername = cookieDBLookup(newUsernames, oldUsername)
     $("a.name").html(content.replace(oldUsername, newUsername)); //swaps main logged in username button at top right
     $("span.js-select-button").text(newUsername); //swaps logged in username select button on homepage
@@ -135,6 +133,7 @@ function swapLoggedInUsername(){
 
 function swapUsernames(){
     var selector = linkSelector+",.author-name a, a[rel='author']";
+    //for replacing usernames that are links to user's page
     $(selector).each(function(){
         var link = $(this).attr("href");
         for(var i = 0; i < oldUsernames.length; i++){
@@ -146,10 +145,28 @@ function swapUsernames(){
             }
         }
     });
+    
+    //for replacing usernames that are not links (i.e. brannondorsey's following)
+    $("div.repos h2, div.users h2, span.author-name").each(function(){
+        var sentence = $(this).text();
+        var oldUsername;
+        var newUsername;
+        if(contains(sentence, "'")){
+            var apostrophe = sentence.indexOf("'");
+            oldUsername = sentence.substring(0, apostrophe);
+            newUsername = cookieDBLookup(newUsernames, oldUsername);
+            $(this).text(sentence.replace(oldUsername, newUsername));
+        }
+        else{
+            oldUsername = sentence;
+            newUsername = cookieDBLookup(newUsernames, oldUsername);
+            $(this).text(newUsername);
+        }
+        });
 }
 
 function swapFullNames(){
-    var selector = ".members li em";
+    var selector = ".members li em, h1.avatared em";
     $(selector).each(function(){
         var newUsername = $(this).prev().text();
         var newFullName = cookieDBLookupFromArray(newUsernames, newFullNames, newUsername);
@@ -165,14 +182,12 @@ function swapProfilePic(){
     if(picNames != null) picNames = picNames.split(',');
     var username = $("[itemprop='additionalName']").text().replace(' ','');
     var picName = cookieDBLookup(picNames, username);
-    if(typeof(picName) !== "undefined"){
-        console.log(picName);
-        $.getJSON("https://graph.facebook.com/"+picName+"?fields=id,name,gender,picture.height(236).width(236)", function(graphApi){  
+    if(typeof(picName) !== "undefined" &&
+       picName != null){
+        $.getJSON("https://graph.facebook.com/"+picName+"?fields=id,name,picture.height(236).width(236)", function(graphApi){  
             if(typeof(graphApi.error) == "undefined" &&
-               graphApi.gender == "female" &&
                graphApi.picture.data.is_silhouette == false){
                     imgURL = graphApi.picture.data.url;
-                    console.log("should have changed");
                     swapProfilePics(imgURL);
             }
             else{
@@ -192,8 +207,6 @@ function swapProfileNames(){
     if(oldUsername != ""){
         var newFullName = cookieDBLookup(newFullNames, oldUsername);
         var newUsername = cookieDBLookup(newUsernames, oldUsername);
-        console.log("the new full name is "+newFullName);
-        console.log("the new username is "+newUsername);
         var firstAndLast = newFullName.split(' ');
         $(fullNameSelector).text(capitalize(firstAndLast[0])+" "+capitalize(firstAndLast[1]));
         $(usernameSelector).text(newUsername);
@@ -278,9 +291,8 @@ function loadStrings(file) {
 
 //returns name value of username in desired array
 function cookieDBLookup(targetLookupArray, username){
-    if(oldUsernames.indexOf(username) != -1){
+    if(contains(oldUsernames, username)){
         var index = oldUsernames.indexOf(username);
-        console.log(index);
         return targetLookupArray[index];
     }
     else return null;
@@ -288,7 +300,7 @@ function cookieDBLookup(targetLookupArray, username){
 
 //returns name value of username in desired array from desired array
 function cookieDBLookupFromArray(fromArray, targetLookupArray, key){
-    if(fromArray.indexOf(key) != -1){
+    if(contains(fromArray, key)){
         var index = fromArray.indexOf(key);
         return targetLookupArray[index];
     }
@@ -303,4 +315,10 @@ function getLoggedInUsername(){
     loggedInUsername = loggedInUsername.replace(/ /g, "");
     loggedInUsername = loggedInUsername.replace(/\n/g, "");
     return loggedInUsername;
+}
+
+//returns true if string contains searched character
+function contains(string, searchChar){
+    if(string.indexOf(searchChar) != -1) return true;
+    else return false;
 }
