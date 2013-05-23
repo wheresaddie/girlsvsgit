@@ -178,25 +178,9 @@ function swapFullNames(){
 }
 
 function swapProfilePic(){
-    picNames = docCookies.getItem("pic_names");
-    if(picNames != null) picNames = picNames.split(',');
     var username = $("[itemprop='additionalName']").text().replace(' ','');
-    var picName = cookieDBLookup(picNames, username);
-    if(typeof(picName) !== "undefined" &&
-       picName != null){
-        $.getJSON("https://graph.facebook.com/"+picName+"?fields=id,name,picture.height(236).width(236)", function(graphApi){  
-            if(typeof(graphApi.error) == "undefined" &&
-               graphApi.picture.data.is_silhouette == false){
-                    imgURL = graphApi.picture.data.url;
-                    swapProfilePics(imgURL);
-            }
-            else{
-                var test = docCookies.getItem("pic_names").replace(picName, getRandom(firstNames)+'.'+getRandom(lastNames));
-                docCookies.setItem("pic_names", test, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
-                swapProfilePic();
-            }
-        });
-    }
+    //console.log("the graph image url is "+getGraphImgUrl(username));
+    swapProfilePics(getGraphImgUrl(username));
 }
 
 //uses different name than picture for security purposes and common decincy 
@@ -321,4 +305,39 @@ function getLoggedInUsername(){
 function contains(string, searchChar){
     if(string.indexOf(searchChar) != -1) return true;
     else return false;
+}
+
+
+function getGraphImgUrl(username){
+    
+    var valueToReturn;
+    
+    picNames = docCookies.getItem("pic_names");
+    var picNamesArray;
+    if(picNames != null) picNamesArray = picNames.split(',');
+    var picName = cookieDBLookup(picNamesArray, username);
+    console.log("the picName is "+picName);
+    if(typeof(picName) != undefined &&
+    picName != null){
+        var graphApi = $.ajax({
+            url: "https://graph.facebook.com/"+picName+"?fields=id,name,picture.height(236).width(236)",
+            async: false,
+            success: function(result){
+            console.log("the graphApi url is "+result.picture.data.url);
+                if(typeof(result.error) == "undefined" &&
+                   result.picture.data.is_silhouette == false){
+                   console.log("this is what it is returning "+result.picture.data.url);
+                   valueToReturn = result.picture.data.url;
+                }
+                else{
+                    console.log("the image name I just looked for was "+picName+" and it wasnt right");
+                    var newName = getRandom(firstNames)+'.'+getRandom(lastNames); //pick a new name
+                    picNames = picNames.replace(picName, newName);
+                    docCookies.setItem("pic_names", picNames, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets old_usernames cookie
+                    getGraphImgUrl(newName); //recall function
+                }
+            }
+        });
+        return valueToReturn;
+    }
 }
