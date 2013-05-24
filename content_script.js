@@ -310,34 +310,34 @@ function contains(string, searchChar){
 
 function getGraphImgUrl(username){
     
-    var valueToReturn;
-    
     picNames = docCookies.getItem("pic_names");
+    var returnVal;
     var picNamesArray;
     if(picNames != null) picNamesArray = picNames.split(',');
     var picName = cookieDBLookup(picNamesArray, username);
     console.log("the picName is "+picName);
     if(typeof(picName) != undefined &&
-    picName != null){
+    picName != ""){
         var graphApi = $.ajax({
             url: "https://graph.facebook.com/"+picName+"?fields=id,name,picture.height(236).width(236)",
             async: false,
             success: function(result){
-            console.log("the graphApi url is "+result.picture.data.url);
                 if(typeof(result.error) == "undefined" &&
                    result.picture.data.is_silhouette == false){
                    console.log("this is what it is returning "+result.picture.data.url);
-                   valueToReturn = result.picture.data.url;
+                   returnVal = result.picture.data.url;
                 }
                 else{
                     console.log("the image name I just looked for was "+picName+" and it wasnt right");
-                    var newName = getRandom(firstNames)+'.'+getRandom(lastNames); //pick a new name
-                    picNames = picNames.replace(picName, newName);
+                    var newPicName = getRandom(firstNames)+'.'+getRandom(lastNames); //pick a new name
+                    picNames = picNames.replace(picName, newPicName);
+                    picNamesArray = picNames.split(','); //resplit new array
                     docCookies.setItem("pic_names", picNames, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets old_usernames cookie
-                    getGraphImgUrl(newName); //recall function
+                    var newUsername = cookieDBLookupFromArray(picNamesArray, newUsernames, newPicName);
+                    returnVal = getGraphImgUrl(username); //recall function
                 }
             }
         });
-        return valueToReturn;
     }
+    return returnVal;
 }
