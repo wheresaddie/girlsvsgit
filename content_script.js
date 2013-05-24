@@ -37,7 +37,6 @@ swapUsernames(); //replaces all instances of usernames
 swapFullNames(); //replaces all instances of fullnames
 changeColors();
 changeCalendarColors();
-
 });
 
 //--------------------------------------------------------//
@@ -179,8 +178,12 @@ function swapFullNames(){
 
 function swapProfilePic(){
     var username = $("[itemprop='additionalName']").text().replace(' ','');
-    //console.log("the graph image url is "+getGraphImgUrl(username));
-    swapProfilePics(getGraphImgUrl(username));
+    replaceImg("div.avatared a img,[class*='gravatar'] img", getGraphImgUrl(username));
+    $(".members li a img").each(function(){
+       var username = $(this).parent().attr("href").substring(1);
+       $(this).attr("src", getGraphImgUrl(username));
+        });
+    
 }
 
 //uses different name than picture for security purposes and common decincy 
@@ -195,11 +198,6 @@ function swapProfileNames(){
         $(fullNameSelector).text(capitalize(firstAndLast[0])+" "+capitalize(firstAndLast[1]));
         $(usernameSelector).text(newUsername);
     }
-}
-
-function swapProfilePics(image){
-    $("div.avatared a img").attr("src", image);
-    $("[class*='gravatar'] img").attr("src",image);
 }
 
 function changeCalendarColors(){
@@ -340,4 +338,8 @@ function getGraphImgUrl(username){
         });
     }
     return returnVal;
+}
+
+function replaceImg(selector, imageUrl){
+    $(selector).attr("src", imageUrl);
 }
