@@ -30,7 +30,8 @@ $("document").ready(function(){
 
 updateCookieDB(); //fills names arrays
 
-//swapProfilePic();   //replaces picture on profile page
+swapProfilePic(); //replaces picture on profile page
+// ^swapProfilePic must be at the top because it reads username before it is changed
 swapProfileNames(); //replaces full name and username on profile pages
 swapLoggedInUsername();
 swapUsernames(); //replaces all instances of usernames
@@ -179,12 +180,28 @@ function swapFullNames(){
 
 function swapProfilePic(){
     var username = $("[itemprop='additionalName']").text().replace(' ','');
-    replaceImg("div.avatared a img,[class*='gravatar'] img", getGraphImgUrl(username));
+    $("div.avatared a img").each(function(){
+        beginImgSwap($(this), username);
+    });
 }
 
 function swapThumbnails(){
-    $(".members li a img").each(function(){
+    
+    //swaps thumbnails with a-tag parents that are direct links to a profile page
+    $(".members li a img,#user-links li a img,.details a img").each(function(){
        var username = $(this).parent().attr("href").substring(1);
+       beginImgSwap($(this), username);
+        });
+    
+    //swaps thumbnails where parent is span with title attr value equal to a username
+    $(".details span img").each(function(){
+       var username = $(this).parent().attr("title");
+       beginImgSwap($(this), username);
+        });
+    
+    //swaps thumbnails with an a-tag next sibling that is a direct links to a profile page
+    $("h1.avatared img").each(function(){
+       var username = $(this).next().attr("href").substring(1);
        beginImgSwap($(this), username);
         });
 }
@@ -347,8 +364,4 @@ function executeImgSwap(result, jQueryObj, username, picName, picNamesString){
         var newUsername = cookieDBLookupFromArray(picNamesArray, newUsernames, newPicName);
         beginImgSwap(jQueryObj, username); //recall function
     }
-}
-
-function replaceImg(selector, imageUrl){
-    $(selector).attr("src", imageUrl);
 }
