@@ -30,13 +30,14 @@ $("document").ready(function(){
 
 updateCookieDB(); //fills names arrays
 
-swapProfilePic();   //replaces picture on profile page
+//swapProfilePic();   //replaces picture on profile page
 swapProfileNames(); //replaces full name and username on profile pages
 swapLoggedInUsername();
 swapUsernames(); //replaces all instances of usernames
 swapFullNames(); //replaces all instances of fullnames
 changeColors();
 changeCalendarColors();
+swapThumbnails();
 });
 
 //--------------------------------------------------------//
@@ -179,11 +180,13 @@ function swapFullNames(){
 function swapProfilePic(){
     var username = $("[itemprop='additionalName']").text().replace(' ','');
     replaceImg("div.avatared a img,[class*='gravatar'] img", getGraphImgUrl(username));
+}
+
+function swapThumbnails(){
     $(".members li a img").each(function(){
        var username = $(this).parent().attr("href").substring(1);
-       $(this).attr("src", getGraphImgUrl(username));
+       beginImgSwap($(this), username);
         });
-    
 }
 
 //uses different name than picture for security purposes and common decincy 
@@ -305,39 +308,45 @@ function contains(string, searchChar){
     else return false;
 }
 
-
-function getGraphImgUrl(username){
+//starts async image swap
+function beginImgSwap(jQueryObj, username){
+    //for debugging uncomment all //// lines
     
     picNames = docCookies.getItem("pic_names");
-    var returnVal;
     var picNamesArray;
     if(picNames != null) picNamesArray = picNames.split(',');
     var picName = cookieDBLookup(picNamesArray, username);
-    console.log("the picName is "+picName);
+    console.log("I just tried to swap an image with the picname as "+picName);
     if(typeof(picName) != undefined &&
     picName != ""){
-        var graphApi = $.ajax({
+        $.ajax({
             url: "https://graph.facebook.com/"+picName+"?fields=id,name,picture.height(236).width(236)",
-            async: false,
             success: function(result){
-                if(typeof(result.error) == "undefined" &&
-                   result.picture.data.is_silhouette == false){
-                   console.log("this is what it is returning "+result.picture.data.url);
-                   returnVal = result.picture.data.url;
-                }
-                else{
-                    console.log("the image name I just looked for was "+picName+" and it wasnt right");
-                    var newPicName = getRandom(firstNames)+'.'+getRandom(lastNames); //pick a new name
-                    picNames = picNames.replace(picName, newPicName);
-                    picNamesArray = picNames.split(','); //resplit new array
-                    docCookies.setItem("pic_names", picNames, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets old_usernames cookie
-                    var newUsername = cookieDBLookupFromArray(picNamesArray, newUsernames, newPicName);
-                    returnVal = getGraphImgUrl(username); //recall function
-                }
+                //pass all of the variables used above into the function that is called once the .ajax call succeeds
+                executeImgSwap(result, jQueryObj, username, picName, picNames);
             }
         });
     }
-    return returnVal;
+}
+
+//function that is called ONLY from inside beginImgSwap once the .ajax call is successfull
+function executeImgSwap(result, jQueryObj, username, picName, picNamesString){
+    if(typeof(result.error) == "undefined" &&
+       result.picture.data.is_silhouette == false){
+       var picUrl = result.picture.data.url;
+       console.log("***it worked!*** The name that worked was "+picName);
+       jQueryObj.attr("src", picUrl);
+    }
+    else{
+        console.log("the image name I just looked for was "+picName+" and it wasnt right");
+        var newPicName = getRandom(firstNames)+'.'+getRandom(lastNames); //pick a new name
+        var picNames = picNamesString.replace(picName, newPicName);
+        var picNamesArray = picNames.split(','); //resplit new array
+        docCookies.setItem("pic_names", picNames, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets old_usernames cookie
+        console.log("I am going to try again with this "+newPicName);
+        var newUsername = cookieDBLookupFromArray(picNamesArray, newUsernames, newPicName);
+        beginImgSwap(jQueryObj, username); //recall function
+    }
 }
 
 function replaceImg(selector, imageUrl){
