@@ -28,7 +28,7 @@ var picLast;
 
 $("document").ready(function(){
 
-updateCookieDB(); //fills names arrays
+updateStorageDB(); //fills names arrays
 swapProfilePic(); //replaces picture on profile page
 // ^swapProfilePic must be at the top because it reads username before it is changed
 swapProfileNames(); //replaces full name and username on profile pages
@@ -43,13 +43,13 @@ swapThumbnails(); //replaces thumbnail images
 
 //--------------------------------------------------------//
 
-function updateCookieDB(){
+function updateStorageDB(){
     var visibleUsernames = new Array(); //holds all possible usernames and links
-    var oldUsernamesCookie = docCookies.getItem("old_usernames"); //loads old old_usernames cookie
-    var newUsernamesCookie = docCookies.getItem("new_usernames");
-    var newFullNamesCookie = docCookies.getItem("new_full_names");
-    var picNamesCookie = docCookies.getItem("pic_names");
-    var totalCookieSize;
+    var oldUsernamesStorage = localStorage.getItem("old_usernames"); //loads old old_usernames storage
+    var newUsernamesStorage = localStorage.getItem("new_usernames");
+    var newFullNamesStorage = localStorage.getItem("new_full_names");
+    var picNamesStorage = localStorage.getItem("pic_names");
+    var totalStorageSize;
     var i = 1; //keeps index of all username grabs
     
     visibleUsernames[0] = getLoggedInUsername(); //makes sure that first array value is logged in user
@@ -70,45 +70,34 @@ function updateCookieDB(){
             i++;
         });
     
-    if(oldUsernamesCookie == null || oldUsernamesCookie == "null") oldUsernamesCookie =""; //if there were no usernames found set var to ""
-    if(newUsernamesCookie == null || newUsernamesCookie == "null") newUsernamesCookie =""; //if there were no usernames found set var to ""
-    if(newFullNamesCookie == null || newFullNamesCookie == "null") newFullNamesCookie =""; //if there were no usernames found set var to ""
-    if(picNamesCookie == null || picNamesCookie == "null") picNamesCookie =""; //if there were no usernames found set var to ""
+    if(oldUsernamesStorage == null || oldUsernamesStorage == "null") oldUsernamesStorage =""; //if there were no usernames found set var to ""
+    if(newUsernamesStorage == null || newUsernamesStorage == "null") newUsernamesStorage =""; //if there were no usernames found set var to ""
+    if(newFullNamesStorage == null || newFullNamesStorage == "null") newFullNamesStorage =""; //if there were no usernames found set var to ""
+    if(picNamesStorage == null || picNamesStorage == "null") picNamesStorage =""; //if there were no usernames found set var to ""
     
     for(var j = 0; j < visibleUsernames.length; j++){
         var newFullName = getRandom(firstNames)+' '+getRandom(lastNames);
         var newPicName = getRandom(firstNames)+'.'+getRandom(lastNames);
         var newUsername = getRandom(usernames);
         
-        //adds username to cookie string if it was not already there
-        if(!contains(oldUsernamesCookie, visibleUsernames[j])){
-             oldUsernamesCookie += visibleUsernames[j]+',';
-             newUsernamesCookie += newUsername+',';
-             newFullNamesCookie += newFullName+',';
-             picNamesCookie     += newPicName+',';
+        //adds username to storage string if it was not already there
+        if(!contains(oldUsernamesStorage, visibleUsernames[j])){
+             oldUsernamesStorage += visibleUsernames[j]+',';
+             newUsernamesStorage += newUsername+',';
+             newFullNamesStorage += newFullName+',';
+             picNamesStorage     += newPicName+',';
         }
     }
     
-    //not very accurate because does not account for chrome's sanitation (i.e , == %2)
-    totalCookieSize = oldUsernamesCookie.length+newUsernamesCookie.length+newFullNamesCookie.length+picNamesCookie.length;
-    
-    //reset cookies to null if they are to large to avoid err 400
-    if(totalCookieSize >= 3500){
-        oldUsernamesCookie ="";
-        newUsernamesCookie =""; 
-        newFullNamesCookie =""; 
-        picNamesCookie ="";
-    }
-    
-    docCookies.setItem("old_usernames", oldUsernamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
-    docCookies.setItem("new_usernames", newUsernamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
-    docCookies.setItem("new_full_names", newFullNamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
-    docCookies.setItem("pic_names", picNamesCookie, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames cookie
+    localStorage.setItem("old_usernames", oldUsernamesStorage, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames storage
+    localStorage.setItem("new_usernames", newUsernamesStorage, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames storage
+    localStorage.setItem("new_full_names", newFullNamesStorage, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames storage
+    localStorage.setItem("pic_names", picNamesStorage, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets (or sets) old_usernames storage
     
      
-    oldUsernames = oldUsernamesCookie.split(',');
-    newUsernames = newUsernamesCookie.split(',');
-    newFullNames = newFullNamesCookie.split(',');
+    oldUsernames = oldUsernamesStorage.split(',');
+    newUsernames = newUsernamesStorage.split(',');
+    newFullNames = newFullNamesStorage.split(',');
 }
 
     //console.log(oldUsernames);
@@ -127,7 +116,7 @@ function updateCookieDB(){
 function swapLoggedInUsername(){
     var oldUsername = getLoggedInUsername();
     var content = $("a.name").html();
-    var newUsername = cookieDBLookup(newUsernames, oldUsername)
+    var newUsername = storageDBLookup(newUsernames, oldUsername)
     $("a.name").html(content.replace(oldUsername, newUsername)); //swaps main logged in username button at top right
     $("span.js-select-button").text(newUsername); //swaps logged in username select button on homepage
 }
@@ -139,7 +128,7 @@ function swapUsernames(){
         var link = $(this).attr("href");
         for(var i = 0; i < oldUsernames.length; i++){
             if(link.indexOf(oldUsernames[i]) != -1 ){
-            link = link.replace(oldUsernames[i], cookieDBLookup(newUsernames, oldUsernames[i]));
+            link = link.replace(oldUsernames[i], storageDBLookup(newUsernames, oldUsernames[i]));
             link = link.substring(1);
             $(this).text(link);
             break;
@@ -155,12 +144,12 @@ function swapUsernames(){
         if(contains(sentence, "'")){
             var apostrophe = sentence.indexOf("'");
             oldUsername = sentence.substring(0, apostrophe);
-            newUsername = cookieDBLookup(newUsernames, oldUsername);
+            newUsername = storageDBLookup(newUsernames, oldUsername);
             $(this).text(sentence.replace(oldUsername, newUsername));
         }
         else{
             oldUsername = sentence;
-            newUsername = cookieDBLookup(newUsernames, oldUsername);
+            newUsername = storageDBLookup(newUsernames, oldUsername);
             $(this).text(newUsername);
         }
         });
@@ -170,7 +159,7 @@ function swapFullNames(){
     var selector = ".members li em, h1.avatared em";
     $(selector).each(function(){
         var newUsername = $(this).prev().text();
-        var newFullName = cookieDBLookupFromArray(newUsernames, newFullNames, newUsername);
+        var newFullName = storageDBLookupFromArray(newUsernames, newFullNames, newUsername);
         if(newFullName != null){
             newFullName = newFullName.split(' ');
             $(this).text('('+capitalize(newFullName[0])+' '+capitalize(newFullName[1])+')');
@@ -232,8 +221,8 @@ function swapProfileNames(){
     var usernameSelector = "[itemprop='additionalName']";
     var oldUsername = $(usernameSelector).text();
     if(oldUsername != ""){
-        var newFullName = cookieDBLookup(newFullNames, oldUsername);
-        var newUsername = cookieDBLookup(newUsernames, oldUsername);
+        var newFullName = storageDBLookup(newFullNames, oldUsername);
+        var newUsername = storageDBLookup(newUsernames, oldUsername);
         var firstAndLast = newFullName.split(' ');
         $(fullNameSelector).text(capitalize(firstAndLast[0])+" "+capitalize(firstAndLast[1]));
         $(usernameSelector).text(newUsername);
@@ -265,7 +254,7 @@ function changeColors(){
     $("a").css("color", anchorColor);             //links
     $("a.selected").css("border-bottom", "2px solid "+anchorColor); 
     $(".mega-icon").css("border-bottom", anchorColor);  //github cat icon 
-    $("[class*='mini-icon'],.octicon,[class='mega-octicon::before']").css("color", iconColor);
+    $("[class*='mini-icon'],.octicon,.mega-octicon").css("color", iconColor);
     $("[class*='full-commit']").css("background", lightestPink); //profile bar above 
     $(".contributions-tab h3").css("background", lightestPink);
     $("#dashboard,ul.repolist,.activity-tab,div.columns.userrepos").css({
@@ -315,7 +304,7 @@ function loadStrings(file) {
 }
 
 //returns name value of username in desired array
-function cookieDBLookup(targetLookupArray, username){
+function storageDBLookup(targetLookupArray, username){
     if(contains(oldUsernames, username)){
         var index = oldUsernames.indexOf(username);
         return targetLookupArray[index];
@@ -324,7 +313,7 @@ function cookieDBLookup(targetLookupArray, username){
 }
 
 //returns name value of username in desired array from desired array
-function cookieDBLookupFromArray(fromArray, targetLookupArray, key){
+function storageDBLookupFromArray(fromArray, targetLookupArray, key){
     if(contains(fromArray, key)){
         var index = fromArray.indexOf(key);
         return targetLookupArray[index];
@@ -352,10 +341,10 @@ function contains(string, searchChar){
 function beginImgSwap(jQueryObj, username){
     //for debugging uncomment all //// lines
     
-    picNames = docCookies.getItem("pic_names");
+    picNames = localStorage.getItem("pic_names");
     var picNamesArray;
     if(picNames != null) picNamesArray = picNames.split(',');
-    var picName = cookieDBLookup(picNamesArray, username);
+    var picName = storageDBLookup(picNamesArray, username);
     console.log("I just tried to swap an image with the picname as "+picName);
     if(typeof(picName) != undefined &&
     picName != ""){
@@ -382,9 +371,9 @@ function executeImgSwap(result, jQueryObj, username, picName, picNamesString){
         var newPicName = getRandom(firstNames)+'.'+getRandom(lastNames); //pick a new name
         var picNames = picNamesString.replace(picName, newPicName);
         var picNamesArray = picNames.split(','); //resplit new array
-        docCookies.setItem("pic_names", picNames, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets old_usernames cookie
+        localStorage.setItem("pic_names", picNames, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets old_usernames storage
         console.log("I am going to try again with this "+newPicName);
-        var newUsername = cookieDBLookupFromArray(picNamesArray, newUsernames, newPicName);
+        var newUsername = storageDBLookupFromArray(picNamesArray, newUsernames, newPicName);
         beginImgSwap(jQueryObj, username); //recall function
     }
 }
