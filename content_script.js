@@ -29,7 +29,6 @@ var picLast;
 $("document").ready(function(){
 
 updateCookieDB(); //fills names arrays
-
 swapProfilePic(); //replaces picture on profile page
 // ^swapProfilePic must be at the top because it reads username before it is changed
 swapProfileNames(); //replaces full name and username on profile pages
@@ -38,7 +37,8 @@ swapUsernames(); //replaces all instances of usernames
 swapFullNames(); //replaces all instances of fullnames
 changeColors();
 changeCalendarColors();
-swapThumbnails();
+swapThumbnails(); //replaces thumbnail images
+
 });
 
 //--------------------------------------------------------//
@@ -148,7 +148,7 @@ function swapUsernames(){
     });
     
     //for replacing usernames that are not links (i.e. brannondorsey's following)
-    $("div.repos h2, div.users h2, span.author-name").each(function(){
+    $("div.repos h2, div.users h2, span.author-name").not(":contains('You')").each(function(){
         var sentence = $(this).text();
         var oldUsername;
         var newUsername;
@@ -179,17 +179,31 @@ function swapFullNames(){
 }
 
 function swapProfilePic(){
-    var username = $("[itemprop='additionalName']").text().replace(' ','');
     $("div.avatared a img").each(function(){
+        var username = $("[itemprop='additionalName']").text().replace(' ','');
         beginImgSwap($(this), username);
     });
+    
+    /*these two must be called at the beginning because it needs to grab content that
+    will change later.*/
+    //swaps thumbnails where desired username is the content of next sibling
+    $(".authorship img").each(function(){
+       var username = $(this).next().text();
+       beginImgSwap($(this), username);
+        });
+    //swaps thumbnails where desired username is the content of the parents next sibling
+    $("div.select-menu-button-gravatar img").each(function(){
+       var username = $(this).parent().next().text();
+       beginImgSwap($(this), username);
+        });
 }
 
 function swapThumbnails(){
     
-    //swaps thumbnails with a-tag parents that are direct links to a profile page
+    //swaps thumbnails with an a-tag parent that is a direct link to a profile page
     $(".members li a img,#user-links li a img,.details a img").each(function(){
        var username = $(this).parent().attr("href").substring(1);
+       console.log("the username is "+username);
        beginImgSwap($(this), username);
         });
     
@@ -200,8 +214,14 @@ function swapThumbnails(){
         });
     
     //swaps thumbnails with an a-tag next sibling that is a direct links to a profile page
-    $("h1.avatared img").each(function(){
+    $("h1.avatared img,img.author-avatar").each(function(){
        var username = $(this).next().attr("href").substring(1);
+       beginImgSwap($(this), username);
+        });
+    
+    //swaps thumbnails with an a-tag as the first child of a node that is a sibling of the img
+    $("div.commit img").each(function(){
+       var username = $(this).next().children(":first-child").attr("href").substring(1);
        beginImgSwap($(this), username);
         });
 }
@@ -247,13 +267,16 @@ function changeColors(){
     $(".mega-icon").css("border-bottom", anchorColor);  //github cat icon 
     $("[class*='mini-icon']").css("color", iconColor);
     $("[class*='full-commit']").css("background", lightestPink); //profile bar above 
-    $(".contributions-tab h3").css("background", lightestPink); 
-    $("#dashboard:parent").css("background", lightestPink).css("padding", "10"); //homepage dashboard
+    $(".contributions-tab h3").css("background", lightestPink);
+    $("#dashboard,ul.repolist,.activity-tab,div.columns.userrepos").css({
+        "background": lightestPink,
+        "padding": "10"
+        }); //homepage dashboard
     $(".octofication .message").css({
                         "background" : lightPurple,
                         "border" : "1px solid #D2BBD2"
                         }); //octocat messages
-    $(".minibutton.primary").css({
+    $(".minibutton.primary,.button.primary.new-repo").css({
                                     "background-image": "linear-gradient("+repoButtonLight+", "+repoButtonDark+")",
                                     "color": "#fff",
                                     "border-color" : repoButtonBorder
