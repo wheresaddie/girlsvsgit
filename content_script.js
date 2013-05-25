@@ -265,7 +265,7 @@ function changeColors(){
     $("a").css("color", anchorColor);             //links
     $("a.selected").css("border-bottom", "2px solid "+anchorColor); 
     $(".mega-icon").css("border-bottom", anchorColor);  //github cat icon 
-    $("[class*='mini-icon']").css("color", iconColor);
+    $("[class*='mini-icon'],.octicon,[class='mega-octicon::before']").css("color", iconColor);
     $("[class*='full-commit']").css("background", lightestPink); //profile bar above 
     $(".contributions-tab h3").css("background", lightestPink);
     $("#dashboard,ul.repolist,.activity-tab,div.columns.userrepos").css({
