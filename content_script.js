@@ -23,25 +23,59 @@ var lastName;
 var username;
 var picFirst;
 var picLast;
+var previousURL;
 
-//------------------CALL FUNCTIONS HERE-------------------//
+//------------------DOC READY-------------------//
 
 $("document").ready(function(){
-
-updateStorageDB(); //fills names arrays
-swapProfilePic(); //replaces picture on profile page
-// ^swapProfilePic must be at the top because it reads username before it is changed
-swapProfileNames(); //replaces full name and username on profile pages
-swapLoggedInUsername();
-swapUsernames(); //replaces all instances of usernames
-swapFullNames(); //replaces all instances of fullnames
-changeColors();
-changeCalendarColors();
-swapThumbnails(); //replaces thumbnail images
-
+    previousURL = document.URL;
+    updateStorageDB(); //fills names arrays
+    swapProfilePic(); //replaces picture on profile page
+    // ^swapProfilePic must be at the top because it reads username before it is changed
+    swapProfileNames(); //replaces full name and username on profile pages
+    swapLoggedInUsername();
+    swapUsernames(); //replaces all instances of usernames
+    swapFullNames(); //replaces all instances of fullnames
+    changeColors();
+    changeCalendarColors();
+    swapThumbnails(); //replaces thumbnail images
 });
 
-//--------------------------------------------------------//
+//--------------------EVENTS------------------------//
+
+//makes swaps when githubs .ajax calls happen because the page is never reloaded
+$("a").click(function(){
+    window.setTimeout(function(){
+        //if(document.URL != previousURL){
+            resetForAjax();
+        //}
+    },250);
+});
+
+$(".stats li a").hover(function(){
+        $(this).children().each(function(){
+                toggleColor($(this), "rgb(34, 34, f34)", anchorColor);
+            });
+    },function(){
+        $(this).children().each(function(){
+                toggleColor($(this), anchorColor, "rgb(34, 34, f34)");
+        });
+    });
+$("ul.tabs li").hover(function(){
+        $(this).css("color", anchorColor);
+    });
+
+
+function toggleColor(jQueryObj,origColor, newColor){
+    if(jQueryObj.css("color") == origColor){
+        jQueryObj.css("color", newColor);
+        console.log("it is the original color");
+    }
+    else jQueryObj.css("color", origColor);
+    console.log(jQueryObj.css("color"));
+}
+
+//------------------FUNCTIONS---------------------//
 
 function updateStorageDB(){
     var visibleUsernames = new Array(); //holds all possible usernames and links
@@ -271,6 +305,17 @@ function changeColors(){
                                     "border-color" : repoButtonBorder
                                     });
     $(".minibutton.primary span").css("color", "#fff");
+}
+
+function resetForAjax(){
+    swapProfilePic(); 
+    swapProfileNames(); 
+    swapUsernames(); 
+    swapFullNames(); 
+    changeColors();
+    changeCalendarColors();
+    swapThumbnails(); 
+    previousURL = document.URL;
 }
 
 /*-----------------HELPER FUNCTIONS---------------------*/

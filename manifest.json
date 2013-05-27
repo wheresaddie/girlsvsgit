@@ -20,7 +20,6 @@
     "offline_enabled": false,
     "permissions": [
         "tabs",
-        "cookies",
         "https://*.github.com/*",
         "http://localhost/*",
         "https://graph.facebook.com/*",
