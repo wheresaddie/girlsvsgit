@@ -9,10 +9,10 @@
                 "https://github.com/*"
             ],
             "js": [
-                "jquery.js",
-                "void_functions.js",
-                "helper_functions.js",
-                "content_script.js"
+                "scripts/jquery.js",
+                "scripts/void_functions.js",
+                "scripts/helper_functions.js",
+                "scripts/content_script.js"
             ]
         }
     ],

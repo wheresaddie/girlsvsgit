@@ -1,3 +1,4 @@
+//------------------GLOBALS------------------//
 
 var backgroundColor = "#ebd2ea";
 var anchorColor = "#d944d3";
