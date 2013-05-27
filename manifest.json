@@ -10,7 +10,8 @@
             ],
             "js": [
                 "jquery.js",
-                "cookies.js",
+                "void_functions.js",
+                "helper_functions.js",
                 "content_script.js"
             ]
         }
@@ -30,6 +31,7 @@
         "manifest.json",
         "common_first_names.txt",
         "common_last_names.txt",
-        "usernames.txt"
+        "usernames.txt",
+        "glitter_cursor.gif"
     ]
 }
