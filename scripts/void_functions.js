@@ -82,7 +82,7 @@ function swapUsernames(){
     });
     
     //for replacing usernames that are not links (i.e. brannondorsey's following)
-    $("div.repos h2, div.users h2, span.author-name").not(":contains('You'),:contains('you')").each(function(){
+    $("div.repos h2, div.users h2").not(":contains('You'),:contains('you')").each(function(){
         var sentence = $(this).text();
         var oldUsername;
         var newUsername;
@@ -97,7 +97,27 @@ function swapUsernames(){
             newUsername = storageDBLookup(newUsernames, oldUsername);
             $(this).text(newUsername);
         }
-        });
+    });
+    
+    //swaps names before repos on right column of homepage
+    $(".css-truncate span.owner").each(function(){
+        var username = $(this).text();
+        console.log("the username is ");
+        $(this).text(storageDBLookup(newUsernames, username));
+    });
+    $(".filter-list.small li a").each(function(){
+        var contents = $(this).html();
+        var beginString = "</span>"
+        var beginIndex = contents.indexOf(beginString);
+        var withoutSpan = contents.substring(beginIndex+beginString.length, contents.length);
+        console.log("the begin index is "+beginIndex);
+        console.log("without span the contents are "+withoutSpan);
+        var slash = withoutSpan.indexOf('/');
+        console.log("the end index is "+slash);
+        var username = withoutSpan.substring(0, slash).replace(/ |\n/g, "");
+        console.log("the username is "+username);
+        $(this).html(contents.replace(username, storageDBLookup(newUsernames, username)));
+    });
 }
 
 function swapFullNames(){
