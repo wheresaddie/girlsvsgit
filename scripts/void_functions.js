@@ -13,15 +13,15 @@ function updateStorageDB(){
     //grab usernames that are links (basically all of them)
     $(linkSelector).each(function(){
         var link = $(this).attr("href");
-            link = link.substring(1);
-            if(link.indexOf("/") == -1){
-                visibleUsernames[i] = link; //if it is a username add it to the array
-                i++;
-            }
+        link = link.substring(1);
+        if(link.indexOf("/") == -1){
+            visibleUsernames[i] = link; //if it is a username add it to the array
+            i++;
+        }
     });
     
     //grabs username from user profile
-    $("[itemprop='additionalName']").each(function(){
+    $("[itemprop='additionalName'],span .owner").each(function(){
             var text = $(this).text();
             visibleUsernames[i] = text;
             i++;
@@ -99,12 +99,13 @@ function swapUsernames(){
         }
     });
     
-    //swaps names before repos on right column of homepage
+    //swaps names before repo links on right column of homepage
     $(".css-truncate span.owner").each(function(){
         var username = $(this).text();
-        console.log("the username is ");
         $(this).text(storageDBLookup(newUsernames, username));
     });
+    
+    //swaps names before repo links on pull requests page
     $(".filter-list.small li a").each(function(){
         var contents = $(this).html();
         var beginString = "</span>"
@@ -155,7 +156,7 @@ function swapProfilePic(){
 function swapThumbnails(){
     
     //swaps thumbnails with an a-tag parent that is a direct link to a profile page
-    $(".members li a img,#user-links li a img,.details a img").each(function(){
+    $(".members li a img,#user-links li a img,.details a img,.user-list a img").each(function(){
        var username = $(this).parent().attr("href").substring(1);
        console.log("the username is "+username);
        beginImgSwap($(this), username);
