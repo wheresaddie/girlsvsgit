@@ -9,10 +9,10 @@ var lightPurple = "#f2dcf7";
 var repoButtonLight = "#DD6DDD"; //for repo button gradient on index
 var repoButtonDark = "#B044A7" //dido
 var repoButtonBorder = "#A141A9";
-var firstNames = loadStrings("common_first_names.txt");
-var lastNames = loadStrings("common_last_names.txt");
-var usernames = loadStrings("usernames.txt");
-var linkSelector = ".title a,li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a,:has(img),[class*='minibutton']),.members li span a:not(.js-toggler-target),h1.avatared a";
+var firstNames = loadStrings("data/common_first_names.txt");
+var lastNames = loadStrings("data/common_last_names.txt");
+var usernames = loadStrings("data/usernames.txt");
+var linkSelector = ".title a, li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a,:has(img),[class*='minibutton']),.members li span a:not(.js-toggler-target),h1.avatared a";
 
 //arrays that hold values for all old and new names and their affiliates like picture lookups
 var oldUsernames;
@@ -30,8 +30,11 @@ var previousURL;
 //------------------DOC READY-------------------//
 
 $("document").ready(function(){
+
+    //change cursor
     $("body").css("cursor", "url('"+chrome.extension.getURL('glitter_cursor.gif')+"'), default");
     previousURL = document.URL;
+    
     updateStorageDB(); //fills names arrays
     swapProfilePic(); //replaces picture on profile page
     // ^swapProfilePic must be at the top because it reads username before it is changed
@@ -52,14 +55,14 @@ $("body").click(function(){
         if(document.URL != previousURL){
             resetForAjax();
         }
-    },250);
+    },450);
 });
 
 $("div.pagination.ajax_paginate").click(function(){
     console.log("I should have just changed something");
     window.setTimeout(function(){
         resetForAjax();
-    },250);
+    },450);
 });
 
 toggleColorOnHover($("a.tooltipped,a.header-logo-invertocat,span.octicon-mark-github,ul.top-nav li a,.stats li a"),

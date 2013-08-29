@@ -81,34 +81,35 @@ function beginImgSwap(jQueryObj, username){
     var picNamesArray;
     if(picNames != null) picNamesArray = picNames.split(',');
     var picName = storageDBLookup(picNamesArray, username);
-    console.log("I just tried to swap an image with the picname as "+picName);
+    //console.log("I just tried to swap an image with the picname as "+picName);
     if(typeof(picName) != undefined &&
     picName != ""){
         $.ajax({
             url: "https://graph.facebook.com/"+picName+"?fields=id,name,picture.height(236).width(236)",
-            success: function(result){
-                //pass all of the variables used above into the function that is called once the .ajax call succeeds
+            success: function(result){ 
                 executeImgSwap(result, jQueryObj, username, picName, picNames);
-            }
+            },
+            error: function(result){
+                executeImgSwap(result, jQueryObj, username, picName, picNames);
+            } 
         });
     }
 }
 
 //function that is called ONLY from inside beginImgSwap once the .ajax call is successfull
 function executeImgSwap(result, jQueryObj, username, picName, picNamesString){
-    if(typeof(result.error) == "undefined" &&
+    if(typeof result.error === 'undefined' &&
        result.picture.data.is_silhouette == false){
        var picUrl = result.picture.data.url;
-       //console.log("***it worked!*** The name that worked was "+picName);
+       console.log("***it worked!*** The name that worked was "+picName);
        jQueryObj.attr("src", picUrl);
-    }
-    else{
+    }else{
         //console.log("the image name I just looked for was "+picName+" and it wasnt right");
         var newPicName = getRandom(firstNames)+'.'+getRandom(lastNames); //pick a new name
         var picNames = picNamesString.replace(picName, newPicName);
         var picNamesArray = picNames.split(','); //resplit new array
         localStorage.setItem("pic_names", picNames, "Fri, 31 Dec 9999 23:59:59 GMT", "/", "github.com"); //resets old_usernames storage
-        //console.log("I am going to try again with this "+newPicName);
+        console.log("I am going to try again with this "+newPicName);
         var newUsername = storageDBLookupFromArray(picNamesArray, newUsernames, newPicName);
         beginImgSwap(jQueryObj, username); //recall function
     }

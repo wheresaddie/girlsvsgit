@@ -12,7 +12,7 @@ function updateStorageDB(){
     visibleUsernames[0] = getLoggedInUsername(); //makes sure that first array value is logged in user
     //grab usernames that are links (basically all of them)
     $(linkSelector).each(function(){
-        var link = $(this).attr("href");
+        var link = $(this).attr("href"); //extracts the href attr
         link = link.substring(1);
         if(link.indexOf("/") == -1){
             visibleUsernames[i] = link; //if it is a username add it to the array
@@ -74,7 +74,7 @@ function swapUsernames(){
         for(var i = 0; i < oldUsernames.length; i++){
             if(link.indexOf(oldUsernames[i]) != -1 ){
             link = link.replace(oldUsernames[i], storageDBLookup(newUsernames, oldUsernames[i]));
-            link = link.substring(1);
+            link = link.substring(link.lastIndexOf("/")+1);
             $(this).text(link);
             break;
             }
@@ -156,8 +156,9 @@ function swapProfilePic(){
 function swapThumbnails(){
     
     //swaps thumbnails with an a-tag parent that is a direct link to a profile page
-    $(".members li a img,#user-links li a img,.details a img,.user-list a img").each(function(){
-       var username = $(this).parent().attr("href").substring(1);
+    $(".users li a img,#user-links li a img,.details a img,.user-list a img, div.jump-to-users a img").each(function(){
+       var href = $(this).parent().attr("href")
+       var username = href.substring(href.lastIndexOf("/")+1);
        console.log("the username is "+username);
        beginImgSwap($(this), username);
         });
