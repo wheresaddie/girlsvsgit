@@ -83,7 +83,8 @@ function beginImgSwap(jQueryObj, username){
     var picName = storageDBLookup(picNamesArray, username);
     //console.log("I just tried to swap an image with the picname as "+picName);
     if(typeof(picName) != undefined &&
-    picName != ""){
+        picName != null &&
+        picName != ""){
         $.ajax({
             url: "https://graph.facebook.com/"+picName+"?fields=id,name,picture.height(236).width(236)",
             success: function(result){ 

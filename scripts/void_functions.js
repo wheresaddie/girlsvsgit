@@ -156,7 +156,7 @@ function swapProfilePic(){
 function swapThumbnails(){
     
     //swaps thumbnails with an a-tag parent that is a direct link to a profile page
-    $(".users li a img,#user-links li a img,.details a img,.user-list a img, div.jump-to-users a img").each(function(){
+    $("h1.avatared a img, .users li a img,ol.follow-list li a img,#user-links li a img,.details a img,.user-list a img, div.jump-to-users a img").each(function(){
        var href = $(this).parent().attr("href")
        var username = href.substring(href.lastIndexOf("/")+1);
        console.log("the username is "+username);
@@ -170,7 +170,7 @@ function swapThumbnails(){
         });
     
     //swaps thumbnails with an a-tag next sibling that is a direct links to a profile page
-    $("h1.avatared img,img.author-avatar").each(function(){
+    $("img.author-avatar").each(function(){
        var username = $(this).next().attr("href").substring(1);
        beginImgSwap($(this), username);
         });

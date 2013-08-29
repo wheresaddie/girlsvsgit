@@ -12,7 +12,7 @@ var repoButtonBorder = "#A141A9";
 var firstNames = loadStrings("data/common_first_names.txt");
 var lastNames = loadStrings("data/common_last_names.txt");
 var usernames = loadStrings("data/usernames.txt");
-var linkSelector = ".title a, li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a,:has(img),[class*='minibutton']),.members li span a:not(.js-toggler-target),h1.avatared a";
+var linkSelector = ".title a, li h3 a,li h4 a,#languages .container li a,.posts li a,.user-list a:not(li a,:has(img),[class*='minibutton']),.members li span a:not(.js-toggler-target),h1.avatared a:not(:has(img))";
 
 //arrays that hold values for all old and new names and their affiliates like picture lookups
 var oldUsernames;
@@ -43,7 +43,7 @@ $("document").ready(function(){
     swapUsernames(); //replaces all instances of usernames
     swapFullNames(); //replaces all instances of fullnames
     changeColors();
-    changeCalendarColors();
+    window.setTimeout(function(){changeCalendarColors();}, 1000);
     swapThumbnails(); //replaces thumbnail images
 });
 
