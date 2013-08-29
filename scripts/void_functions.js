@@ -122,7 +122,7 @@ function swapUsernames(){
 }
 
 function swapFullNames(){
-    var selector = ".members li em, h1.avatared em";
+    var selector = ".members li em, h1.avatared em, h1.avatared strong";
     $(selector).each(function(){
         var newUsername = $(this).prev().text();
         var newFullName = storageDBLookupFromArray(newUsernames, newFullNames, newUsername);
