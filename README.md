@@ -1,7 +1,7 @@
 girlsvsgit
 ==========
 
-![example image](example.png)
+![example image](src/example.png)
 
 GIRLS VS GITHUB
 

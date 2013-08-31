@@ -1,8 +1,13 @@
 {
     "name": "Girls vs Git",
-    "version": "0.1",
+    "version": "1.0",
     "manifest_version": 2,
-    "description": "A Girlier GitHub",
+    "description": "A girlier GitHub",
+    "icons": { 
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
     "content_scripts": [
         {
             "matches": [
