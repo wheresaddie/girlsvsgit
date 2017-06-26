@@ -10,7 +10,7 @@ female username. every gravatar is replaced with a gravatar of a woman or female
 
 Gravatars are pulled from womens facebok and ravelry accounts (with permission)
 
-Why? There is a dearth of women contributing to open source
+Why? There is a death of women contributing to open source
 software. This plugin is presented as a "filter" to challenge
 assumptions about gender roles in software, and to "rewire" your
 brain. 
